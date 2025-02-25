@@ -16,21 +16,30 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UWorld* World = GetWorld(); //Make UWorld Pointer Var to get world
-	FVector Location = GetActorLocation();
-	FVector Forward = GetActorForwardVector();
-
-	DRAW_SPHERE(Location) //doesn't need ; because there is one ";" in macro
-	//DRAW_LINE(Location, Location + Forward * 100.f)
-	//DRAW_POINT(Location + Forward * 100.f)
-	DRAW_VECTOR(Location, Location + Forward * 100.f);
-	DRAW_SPHERE2 (Location, FColor::Emerald)
-
-
 }
 
 void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	RunningTime += DeltaTime;
+
+
+	//float DeltaZ = Amplitude * FMath::Sin(RunningTime * TimeConstant);
+	//AddActorWorldOffset(FVector(0.f, 0.f, DeltaZ));
+	
+	DRAW_SPHERE_SingleFrame(GetActorLocation());
+	DRAW_VECTOR_SingleFrame(GetActorLocation(),GetActorLocation()+GetActorForwardVector() * 100.f);
+}
+
+
+float AItem::TransformedSin()
+{
+	return Amplitude * FMath::Sin(RunningTime * TimeConstant);
+}
+
+float AItem::TransformedCosin()
+{
+	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
 }
 

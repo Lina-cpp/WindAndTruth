@@ -17,6 +17,24 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sinus Settings")
+	float Amplitude = 0.25f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sinus Settings")
+	float TimeConstant = 5.f;
+
+	UFUNCTION(BlueprintPure, Category = "Sinus Settings")
+	float TransformedSin();
+
+	UFUNCTION(BlueprintPure, Category = "Sinus Settings")
+	float TransformedCosin();
+
+private:	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
+	float RunningTime;
+	
+
 
 
 
