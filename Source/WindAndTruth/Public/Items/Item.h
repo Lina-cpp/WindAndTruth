@@ -30,6 +30,9 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "Sinus Settings")
 	float TransformedCosin();
 
+	template<typename T> //calling AVG function I need to specify typename for it can be float, double, int etc
+	T Avg(T First, T Second);
+	
 private:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
@@ -40,3 +43,9 @@ private:
 
 
 };
+
+template <typename T>
+T AItem::Avg(T First, T Second)
+{
+	return  (First + Second) / 2;
+}
