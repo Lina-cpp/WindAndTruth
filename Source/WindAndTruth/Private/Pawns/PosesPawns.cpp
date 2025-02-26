@@ -10,7 +10,8 @@ APosesPawns::APosesPawns()
 		SetRootComponent(Capsule);
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 		SkeletalMesh->SetupAttachment(Capsule);
-	
+
+	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void APosesPawns::BeginPlay()
