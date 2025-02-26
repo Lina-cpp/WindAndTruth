@@ -36,10 +36,9 @@ protected:
 private:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
-	
 
-
-
+	UPROPERTY(VisibleAnywhere) //without uprop GarbageCollector will simply destroy it, because it's null pointer
+	UStaticMeshComponent* ItemMesh;
 
 
 };
