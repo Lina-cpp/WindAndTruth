@@ -2,10 +2,15 @@
 
 
 #include "Pawns/PosesPawns.h"
-
+#include "Components/CapsuleComponent.h"
 APosesPawns::APosesPawns()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+		SetRootComponent(Capsule);
+	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+		SkeletalMesh->SetupAttachment(Capsule);
+	
 }
 
 void APosesPawns::BeginPlay()

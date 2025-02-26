@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+
 #include "PosesPawns.generated.h"
+
+class UCapsuleComponent; //forward declaration of using UCapsuleComponent (.h added in .cpp)
 
 UCLASS()
 class WINDANDTRUTH_API APosesPawns : public APawn
@@ -21,6 +24,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-
+private:
+		UPROPERTY(VisibleAnywhere)
+			UCapsuleComponent* Capsule;
+		UPROPERTY(VisibleAnywhere)
+			USkeletalMeshComponent* SkeletalMesh;
 
 };
