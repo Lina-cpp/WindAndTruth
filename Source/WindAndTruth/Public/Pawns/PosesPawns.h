@@ -8,6 +8,8 @@
 #include "PosesPawns.generated.h"
 
 class UCapsuleComponent; //forward declaration of using UCapsuleComponent (.h added in .cpp)
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class WINDANDTRUTH_API APosesPawns : public APawn
@@ -29,5 +31,9 @@ private:
 			UCapsuleComponent* Capsule;
 		UPROPERTY(VisibleAnywhere)
 			USkeletalMeshComponent* SkeletalMesh;
+		UPROPERTY(visibleAnywhere)
+			USpringArmComponent* SpringArm;
+		UPROPERTY(visibleAnywhere)
+			UCameraComponent* ViewCamera;
 
 };
