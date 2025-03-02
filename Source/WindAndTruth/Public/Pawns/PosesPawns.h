@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "InputActionValue.h"
 
 #include "PosesPawns.generated.h"
 
 class UCapsuleComponent; //forward declaration of using UCapsuleComponent (.h added in .cpp)
 class USpringArmComponent;
 class UCameraComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class WINDANDTRUTH_API APosesPawns : public APawn
@@ -26,6 +29,17 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+//Input Mapping Context in C++
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputMappingContext* PawnMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* MoveAction;
+			void Move(const FInputActionValue& Value);
+
+	
+	
+	
 private:
 		UPROPERTY(VisibleAnywhere)
 			UCapsuleComponent* Capsule;
