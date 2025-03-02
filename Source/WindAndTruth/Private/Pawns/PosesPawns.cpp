@@ -52,11 +52,11 @@ void APosesPawns::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 }
+
+
 //
 //	IMC
 //
-
-
 // Called to bind functionality to input
 void APosesPawns::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -65,18 +65,37 @@ void APosesPawns::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APosesPawns::Move);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APosesPawns::Look);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APosesPawns::Interact);
 	}
 }
-
-
 
 // IMC
 void APosesPawns::Move(const FInputActionValue& Value)
 {
-	const float DirectionValue = Value.Get<float>();
-	if (Controller && (DirectionValue != 0.f)) //check if controller is valid and FloatValue other than 0
+	const FVector2D DirectionValue = Value.Get<FVector2D>();
+	if (GetController())
 	{
-		FVector Forward = GetActorForwardVector(); //Get forward vector and save to var forward
-		AddMovementInput(Forward, DirectionValue); //Forward as worlddirection (forward vector)
+		FVector Forward = GetActorForwardVector();
+		AddMovementInput(Forward, DirectionValue.Y);
+	}
+}
+
+void APosesPawns::Look(const FInputActionValue& Value)
+{
+	const FVector2D LookAxisValue = Value.Get<FVector2D>(); //save value (Y & X)
+	if (GetController())
+	{
+		AddControllerYawInput(LookAxisValue.X);
+		AddControllerPitchInput(LookAxisValue.Y);
+	}
+}
+
+void APosesPawns::Interact(const FInputActionValue& Value)
+{
+	const bool Input = Value.Get<bool>();
+	if (GetController())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "Interacting");
 	}
 }
