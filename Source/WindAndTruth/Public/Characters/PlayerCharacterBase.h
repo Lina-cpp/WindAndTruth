@@ -4,7 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Pawns/PosesPawns.h"
+
 #include "PlayerCharacterBase.generated.h"
+
+//Forward Declaring
+class USpringArmComponent;
+class UCameraComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class WINDANDTRUTH_API APlayerCharacterBase : public ACharacter
@@ -19,5 +27,16 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+// InputMappings
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputMappingContext* PlayerContextMapping;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* MoveForward;
+			void Move(const FInputActionValue& Value);
 
+private:
+	UPROPERTY(VisibleAnywhere)
+		USpringArmComponent* CameraBoom;
+	UPROPERTY(VisibleAnywhere)
+		UCameraComponent* ViewCamera;
 };
