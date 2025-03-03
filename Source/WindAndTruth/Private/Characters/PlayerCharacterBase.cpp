@@ -12,7 +12,9 @@
 APlayerCharacterBase::APlayerCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
 	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
 		CameraBoom->SetupAttachment(GetRootComponent());
@@ -48,6 +50,7 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveForward, ETriggerEvent::Triggered, this, &APlayerCharacterBase::Move);
+		EnhancedInputComponent->BindAction(LookAround, ETriggerEvent::Triggered, this, &APlayerCharacterBase::Look);
 	}
 }
 
@@ -60,8 +63,22 @@ void APlayerCharacterBase::Move(const FInputActionValue& Value)
 		FVector Right = GetActorRightVector();
 		AddMovementInput(GetActorForwardVector(), Direction.Y);
 		AddMovementInput(GetActorRightVector(), Direction.X);
+
+		
 		//UE_LOG(LogTemp, Warning, TEXT("Move activ"));
 		FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Direction.Y, Direction.X );
 		GEngine->AddOnScreenDebugMessage(3, 1, FColor::Green, Message);
+	}
+}
+
+inline void APlayerCharacterBase::Look(const FInputActionValue& Value)
+{
+	const FVector2D Axis = Value.Get<FVector2D>();
+	if (Controller)
+	{
+		AddControllerYawInput(Axis.X);
+		AddControllerPitchInput(Axis.Y);
+		FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Axis.Y, Axis.X );
+		GEngine->AddOnScreenDebugMessage(4, 1, FColor::Red, Message);
 	}
 }

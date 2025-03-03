@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* MoveForward;
 			void Move(const FInputActionValue& Value);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* LookAround;
+			void Look(const FInputActionValue& Value);
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -40,3 +43,4 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		UCameraComponent* ViewCamera;
 };
+
