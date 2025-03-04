@@ -7,15 +7,21 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	//roation off so character won't be 'glued' to the screen and rotate with camera
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
+
+	GetCharacterMovement()->bOrientRotationToMovement = true; //Character will turn to directions he is moving
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f); //Rotation speed
 	
+	//Spring arm and Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
 		CameraBoom->SetupAttachment(GetRootComponent());
 		CameraBoom->TargetArmLength = 300.0f;
@@ -59,15 +65,22 @@ void APlayerCharacterBase::Move(const FInputActionValue& Value)
 	const FVector2D Direction = Value.Get<FVector2D>();
 	if (Controller)
 	{
-		FVector Forward = GetActorForwardVector();
-		FVector Right = GetActorRightVector();
-		AddMovementInput(GetActorForwardVector(), Direction.Y);
-		AddMovementInput(GetActorRightVector(), Direction.X);
+		const FRotator ControlRotation = GetControlRotation();
+		const FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f); //only Yaw matters (turning left/right)
 
 		
+		//With this code, PlayerCharacter will move to direction that camera "points"
+		//Works only with Forward/Backwards
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X); //UnitVector (length 1) of Yaw (MatrixRotation calculate where ForwardVector is)
+		AddMovementInput(ForwardDirection, Direction.Y);
+
+		//Same thing but Right/Left
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(RightDirection, Direction.X);
+		
 		//UE_LOG(LogTemp, Warning, TEXT("Move activ"));
-		FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Direction.Y, Direction.X );
-		GEngine->AddOnScreenDebugMessage(3, 1, FColor::Green, Message);
+		//FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Direction.Y, Direction.X );
+		//GEngine->AddOnScreenDebugMessage(3, 1, FColor::Green, Message);
 	}
 }
 
