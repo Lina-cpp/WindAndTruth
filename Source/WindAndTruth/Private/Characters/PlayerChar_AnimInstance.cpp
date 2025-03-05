@@ -25,5 +25,6 @@ void UPlayerChar_AnimInstance::NativeUpdateAnimation(float DeltaTime)
 	{
 		//Get Function from KismetMathLib to GetVectorLength of XY
 		GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
+		IsFalling = CharacterMovementComponent->IsFalling();
 	}
 }
