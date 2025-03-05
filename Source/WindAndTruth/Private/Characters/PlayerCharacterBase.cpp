@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GroomComponent.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -27,6 +28,15 @@ APlayerCharacterBase::APlayerCharacterBase()
 		CameraBoom->TargetArmLength = 300.0f;
 	ViewCamera = CreateDefaultSubobject<UCameraComponent>("ViewCamera");
 		ViewCamera->SetupAttachment(CameraBoom);
+
+	//Grooms
+	Hair = CreateDefaultSubobject<UGroomComponent>("Hair");
+		Hair->SetupAttachment(GetMesh());
+		Hair->AttachmentName = FString("head");
+	
+	Eyebrows = CreateDefaultSubobject<UGroomComponent>("Eyebrows");
+		Eyebrows->SetupAttachment(GetMesh());
+		Eyebrows->AttachmentName = FString("head");
 }
 
 void APlayerCharacterBase::BeginPlay()
@@ -92,7 +102,7 @@ inline void APlayerCharacterBase::Look(const FInputActionValue& Value)
 	{
 		AddControllerYawInput(Axis.X);
 		AddControllerPitchInput(Axis.Y);
-		FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Axis.Y, Axis.X );
-		GEngine->AddOnScreenDebugMessage(4, 1, FColor::Red, Message);
+		//FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Axis.Y, Axis.X );
+		//GEngine->AddOnScreenDebugMessage(4, 1, FColor::Red, Message);
 	}
 }

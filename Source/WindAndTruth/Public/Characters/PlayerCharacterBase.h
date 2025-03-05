@@ -13,6 +13,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class UGroomComponent;
 
 UCLASS()
 class WINDANDTRUTH_API APlayerCharacterBase : public ACharacter
@@ -44,5 +45,12 @@ private:
 		USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere)
 		UCameraComponent* ViewCamera;
+
+	//Grooms
+	UPROPERTY(VisibleAnywhere, Category = Hair)
+		UGroomComponent* Hair;
+	UPROPERTY(VisibleAnywhere, Category = Hair)
+		UGroomComponent* Eyebrows;
+	
 };
 
