@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+class USphereComponent;
+
 UCLASS()
 class WINDANDTRUTH_API AItem : public AActor
 {
@@ -32,14 +34,21 @@ protected:
 
 	template<typename T> //calling AVG function I need to specify typename for it can be float, double, int etc
 	T Avg(T First, T Second);
+
+	UFUNCTION()
+		void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+		void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 	
 private:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
 
 	UPROPERTY(VisibleAnywhere) //without uprop GarbageCollector will simply destroy it, because it's null pointer
-	UStaticMeshComponent* ItemMesh;
-
+		UStaticMeshComponent* ItemMesh;
+	UPROPERTY(VisibleAnywhere)
+		USphereComponent* Sphere;
 
 };
 
