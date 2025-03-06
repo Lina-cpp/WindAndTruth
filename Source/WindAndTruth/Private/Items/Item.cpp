@@ -12,9 +12,10 @@ AItem::AItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	Root = CreateDefaultSubobject<USceneComponent>("DefaultRoot");
+		RootComponent = Root;
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent")); //Create statis mesh component
-	RootComponent = ItemMesh; //Make ItemMesh a Root
-
+		ItemMesh->SetupAttachment(GetRootComponent());
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 		Sphere->SetupAttachment(RootComponent);
 }
