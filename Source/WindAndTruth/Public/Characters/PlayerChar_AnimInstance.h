@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "CharacterTypes.h"
 
 #include "PlayerChar_AnimInstance.generated.h"
 
@@ -21,11 +22,13 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaTime) override;
 
 	UPROPERTY(BLueprintReadOnly) //char pointer that we will cast to
-		class APlayerCharacterBase* Character;
+		class APlayerCharacterBase* PlayerCharacter;
 	UPROPERTY(BlueprintReadOnly, Category = Movement) //movement var for ground speed, jumping etc.
 		class UCharacterMovementComponent* CharacterMovementComponent;
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 		float GroundSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 		bool IsFalling;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement | Character State")
+		ECharacterState CharacterState; //Enum with current player State - Changed in PlayerCharacterBase
 };

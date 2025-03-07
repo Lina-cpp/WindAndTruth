@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Pawns/PosesPawns.h"
+#include "CharacterTypes.h"
 
 #include "PlayerCharacterBase.generated.h"
 
@@ -15,6 +16,8 @@ class UInputMappingContext;
 class UInputAction;
 class UGroomComponent;
 class AItem;
+
+
 
 UCLASS()
 class WINDANDTRUTH_API APlayerCharacterBase : public ACharacter
@@ -57,8 +60,13 @@ private:
 		UCameraComponent* ViewCamera;
 	UPROPERTY(VisibleInstanceOnly)
 		AItem* OverlappingItem; //Ref to an item we are overlapping right now
+	//Default Character State
+	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
+	//public getter for EnumVar so PlayerChar_AnimInstance can get the value
+	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 
 };
 

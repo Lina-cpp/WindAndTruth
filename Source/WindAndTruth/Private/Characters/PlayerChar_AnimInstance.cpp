@@ -10,10 +10,10 @@ void UPlayerChar_AnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	Character = Cast<APlayerCharacterBase>(TryGetPawnOwner()); //cast to playerchar and set it
-	if (Character)
+	PlayerCharacter = Cast<APlayerCharacterBase>(TryGetPawnOwner()); //cast to playerchar and set it
+	if (PlayerCharacter)
 	{
-		CharacterMovementComponent = Character->GetCharacterMovement(); //if cast succeed set MovementComponent
+		CharacterMovementComponent = PlayerCharacter->GetCharacterMovement(); //if cast succeed set MovementComponent
 	}
 }
 
@@ -26,5 +26,6 @@ void UPlayerChar_AnimInstance::NativeUpdateAnimation(float DeltaTime)
 		//Get Function from KismetMathLib to GetVectorLength of XY
 		GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
 		IsFalling = CharacterMovementComponent->IsFalling();
+		CharacterState = PlayerCharacter->GetCharacterState();
 	}
 }
