@@ -73,6 +73,8 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAround, ETriggerEvent::Triggered, this, &APlayerCharacterBase::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Interaction);
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &APlayerCharacterBase::PrimaryAct);
+		
 	}
 }
 
@@ -121,4 +123,9 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
 	}
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));
+}
+
+void APlayerCharacterBase::PrimaryAct(const FInputActionValue& Value)
+{
+	
 }

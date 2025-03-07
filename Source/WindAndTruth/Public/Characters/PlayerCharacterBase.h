@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* InteractionAction;
 			void Interaction(const FInputActionValue& Value);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* PrimaryAction;
+			void PrimaryAct(const FInputActionValue& Value);
 
 private:
 	//Grooms
