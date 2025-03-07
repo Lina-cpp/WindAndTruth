@@ -14,6 +14,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class UGroomComponent;
+class AItem;
 
 UCLASS()
 class WINDANDTRUTH_API APlayerCharacterBase : public ACharacter
@@ -39,18 +40,25 @@ protected:
 			void Look(const FInputActionValue& Value);
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* JumpAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* InteractionAction;
+			void Interaction(const FInputActionValue& Value);
 
 private:
-	UPROPERTY(VisibleAnywhere)
-		USpringArmComponent* CameraBoom;
-	UPROPERTY(VisibleAnywhere)
-		UCameraComponent* ViewCamera;
-
 	//Grooms
 	UPROPERTY(VisibleAnywhere, Category = Hair)
 		UGroomComponent* Hair;
 	UPROPERTY(VisibleAnywhere, Category = Hair)
 		UGroomComponent* Eyebrows;
-	
+		
+	UPROPERTY(VisibleAnywhere)
+		USpringArmComponent* CameraBoom;
+	UPROPERTY(VisibleAnywhere)
+		UCameraComponent* ViewCamera;
+	UPROPERTY(VisibleInstanceOnly)
+		AItem* OverlappingItem; //Ref to an item we are overlapping right now
+public:
+	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
+
 };
 

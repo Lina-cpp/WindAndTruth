@@ -5,6 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "WindAndTruth/DebugMacros.h"
 #include "Components/SphereComponent.h"
+#include "Characters/PlayerCharacterBase.h"
 
 
 
@@ -49,22 +50,21 @@ float AItem::TransformedCosin()
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
-	//Print Name of actor that overlapped
-	const FString OtherActorName = OtherActor->GetName();
-	if (GEngine)
+	APlayerCharacterBase* PlayerCharacterBase = Cast<APlayerCharacterBase>(OtherActor); //On Overlap cast to PlayerCharacter
+	if (PlayerCharacterBase)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Blue, OtherActorName);
+		PlayerCharacterBase->SetOverlappingItem(this); //if valid, Get function from PlayerCharacter and call SetOverlapping item with THIS (this weapon)
+		
 	}
 }
 
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	const FString OtherActorName = FString("End overlap with: ") + OtherActor->GetName();
-	if (GEngine)
+	APlayerCharacterBase* PlayerCharacterBase = Cast<APlayerCharacterBase>(OtherActor);
+	if (PlayerCharacterBase)
 	{
-		GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Cyan, OtherActorName);
+		PlayerCharacterBase->SetOverlappingItem(nullptr); // Clear weapon
 	}
 }
 
