@@ -40,15 +40,14 @@ protected:
 	UFUNCTION()
 		virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) //without uprop GarbageCollector will simply destroy it, because it's null pointer
+		UStaticMeshComponent* ItemMesh;
 private:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
 
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* Root;
-	UPROPERTY(EditAnywhere) //without uprop GarbageCollector will simply destroy it, because it's null pointer
-		UStaticMeshComponent* ItemMesh;
 	UPROPERTY(VisibleAnywhere)
 		USphereComponent* Sphere;
 
