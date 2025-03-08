@@ -12,7 +12,6 @@
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
-#include "Misc/LowLevelTestAdapter.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -90,6 +89,7 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void APlayerCharacterBase::Move(const FInputActionValue& Value)
 {
+	if (ActionState == EActionState::EAS_Attacking) return; //if in atacking state leave this function
 	const FVector2D Direction = Value.Get<FVector2D>();
 	if (Controller)
 	{
