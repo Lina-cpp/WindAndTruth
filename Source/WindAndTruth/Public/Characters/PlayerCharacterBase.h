@@ -16,7 +16,7 @@ class UInputMappingContext;
 class UInputAction;
 class UGroomComponent;
 class AItem;
-
+class UAnimMontage;
 
 
 UCLASS()
@@ -47,8 +47,8 @@ protected:
 		UInputAction* InteractionAction;
 			void Interaction(const FInputActionValue& Value);
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-		UInputAction* PrimaryAction;
-			void PrimaryAct(const FInputActionValue& Value);
+		UInputAction* AttackAction;
+			void Attack(const FInputActionValue& Value);
 
 private:
 	//Grooms
@@ -65,6 +65,17 @@ private:
 		AItem* OverlappingItem; //Ref to an item we are overlapping right now
 	//Default Character State
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
+
+	
+	/**
+	 * Animation Montages
+	 **/
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+		UAnimMontage* AttackMontage;
+
+
+
 	
 public:
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }

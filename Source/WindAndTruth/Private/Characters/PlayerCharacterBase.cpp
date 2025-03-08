@@ -11,6 +11,8 @@
 #include "GroomComponent.h"
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
+#include "Animation/AnimMontage.h"
+#include "Misc/LowLevelTestAdapter.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -60,9 +62,17 @@ void APlayerCharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-//
-// Input Actions & IMC
-//
+
+
+
+
+
+
+
+
+/**
+* Input Actions & IMC
+**/
 void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -73,7 +83,7 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAround, ETriggerEvent::Triggered, this, &APlayerCharacterBase::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Interaction);
-		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &APlayerCharacterBase::PrimaryAct);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Attack);
 		
 	}
 }
@@ -125,7 +135,32 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));
 }
 
-void APlayerCharacterBase::PrimaryAct(const FInputActionValue& Value)
+void APlayerCharacterBase::Attack(const FInputActionValue& Value)
 {
-	
+	//GetPlayer Mesh and get AnimInstance
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && AttackMontage) //check if AnimInstance is valid and if AttackMontage isn't nullptr
+	{
+		//how it works - get random number, then play matching section from AM_Attack
+		AnimInstance->Montage_Play(AttackMontage);
+		int32 Selection = FMath::RandRange(0,2); //random number (rn 3 because I have 3 attack anims)
+		FName SectionName = FName(); //Clear FName, to overwrite in switch
+		switch (Selection)
+		{
+			case 0:
+			SectionName = 	FName("Attack1");
+				break;
+			case 1:
+				SectionName = 	FName("Attack2");
+				break;
+			case 2:
+				SectionName = 	FName("Attack3");
+				break;
+
+			default:
+				break;
+		}
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+		
+	}
 }
