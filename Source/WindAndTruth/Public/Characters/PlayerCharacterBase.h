@@ -69,8 +69,13 @@ protected:
 	bool CanAttack();
 	bool CanDisarm();
 	bool CanArm();
-	
 
+	UFUNCTION(BlueprintCallable)
+	void Disarm(); // Attaches weapon to the back
+	UFUNCTION(BlueprintCallable)
+	void ArmWeapon();
+	UFUNCTION(BlueprintCallable)
+	void FinishEquipping();
 
 	
 private:

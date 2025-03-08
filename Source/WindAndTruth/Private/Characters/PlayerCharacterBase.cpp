@@ -8,10 +8,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GroomComponent.h"
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "GroomComponent.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -90,7 +90,7 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void APlayerCharacterBase::Move(const FInputActionValue& Value)
 {
-	if (ActionState == EActionState::EAS_Attacking) return; //if in atacking state leave this function
+	if (ActionState != EActionState::EAS_Unoccupied) return; //if in atacking/equiping weapon state leave this function
 	const FVector2D Direction = Value.Get<FVector2D>();
 	if (Controller)
 	{
@@ -147,14 +147,38 @@ void APlayerCharacterBase::EquipWeaponFromBack(const FInputActionValue& Value)
 	if (CanDisarm())
 	{
 		PlayEquipMontage(FName("Unequip"));
-		CharacterState = ECharacterState::ECS_Unequipped;	
+		CharacterState = ECharacterState::ECS_Unequipped;
+		ActionState = EActionState::EAS_EquippingWeapon;
 	}
 	else if (CanArm())
 	{
 		PlayEquipMontage(FName("Equip"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+		ActionState = EActionState::EAS_EquippingWeapon;
 	}
 	
+}
+
+void APlayerCharacterBase::Disarm()
+{
+	if (EquippedWeapon)
+	{
+		//Call Function from weapon to attach weapon mesh to socket on the back - added in ABP_Echo
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
+	}
+}
+
+void APlayerCharacterBase::ArmWeapon()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
+void APlayerCharacterBase::FinishEquipping()
+{
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
 void APlayerCharacterBase::PlayAttackMontage()
