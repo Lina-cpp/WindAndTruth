@@ -83,6 +83,7 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Interaction);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Attack);
+		EnhancedInputComponent->BindAction(WeaponEquip, ETriggerEvent::Started, this, &APlayerCharacterBase::EquipWeaponFromBack);
 		
 	}
 }
@@ -105,10 +106,6 @@ void APlayerCharacterBase::Move(const FInputActionValue& Value)
 		//Same thing but Right/Left
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(RightDirection, Direction.X);
-		
-		//UE_LOG(LogTemp, Warning, TEXT("Move activ"));
-		//FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Direction.Y, Direction.X );
-		//GEngine->AddOnScreenDebugMessage(3, 1, FColor::Green, Message);
 	}
 }
 
@@ -119,8 +116,6 @@ inline void APlayerCharacterBase::Look(const FInputActionValue& Value)
 	{
 		AddControllerYawInput(Axis.X);
 		AddControllerPitchInput(Axis.Y);
-		//FString Message = FString::Printf(TEXT("Move Forward: %f  Move Right: %f"), Axis.Y, Axis.X );
-		//GEngine->AddOnScreenDebugMessage(4, 1, FColor::Red, Message);
 	}
 }
 
@@ -131,6 +126,7 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 	{
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+		EquippedWeapon = OverlappingWeapon; 
 	}
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));
 }
@@ -145,10 +141,20 @@ void APlayerCharacterBase::Attack(const FInputActionValue& Value)
 	}
 }
 
-bool APlayerCharacterBase::CanAttack()
+
+void APlayerCharacterBase::EquipWeaponFromBack(const FInputActionValue& Value)
 {
-	return ActionState == EActionState::EAS_Unoccupied &&
-		CharacterState != ECharacterState::ECS_Unequipped;
+	if (CanDisarm())
+	{
+		PlayEquipMontage(FName("Unequip"));
+		CharacterState = ECharacterState::ECS_Unequipped;	
+	}
+	else if (CanArm())
+	{
+		PlayEquipMontage(FName("Equip"));
+		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	}
+	
 }
 
 void APlayerCharacterBase::PlayAttackMontage()
@@ -181,9 +187,46 @@ void APlayerCharacterBase::PlayAttackMontage()
 	}
 }
 
+void APlayerCharacterBase::PlayEquipMontage(FName SectionName)
+{
+
+	//Get instance and play montage by section (Section is selected inEquipWeaponFromBack())
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && EquipMontage)
+	{
+		AnimInstance->Montage_Play(EquipMontage);
+		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
+	}
+	
+}
+
 void APlayerCharacterBase::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify
 }
 
 
+
+
+/**
+ * 
+ * Bool Functions
+ **/
+bool APlayerCharacterBase::CanAttack()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+bool APlayerCharacterBase::CanDisarm()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+bool APlayerCharacterBase::CanArm()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+	CharacterState == ECharacterState::ECS_Unequipped &&
+	EquippedWeapon;
+}

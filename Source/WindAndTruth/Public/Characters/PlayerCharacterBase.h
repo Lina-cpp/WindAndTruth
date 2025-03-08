@@ -17,6 +17,7 @@ class UInputAction;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
+class AWeapon;
 
 
 UCLASS()
@@ -51,6 +52,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* AttackAction;
 			void Attack(const FInputActionValue& Value);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* WeaponEquip;
+			void EquipWeaponFromBack(const FInputActionValue& Value);
 
 
 	
@@ -60,7 +64,12 @@ protected:
 	void PlayAttackMontage();
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
+	void PlayEquipMontage(FName SectionName);
+	
 	bool CanAttack();
+	bool CanDisarm();
+	bool CanArm();
+	
 
 
 	
@@ -73,7 +82,7 @@ private:
 		UGroomComponent* Hair;
 	UPROPERTY(VisibleAnywhere, Category = Hair)
 		UGroomComponent* Eyebrows;
-		
+	//Components
 	UPROPERTY(VisibleAnywhere)
 		USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere)
@@ -96,8 +105,11 @@ private:
 **/
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 		UAnimMontage* AttackMontage;
-
-
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+		UAnimMontage* EquipMontage;
+	
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	AWeapon* EquippedWeapon;
 
 	
 public:
