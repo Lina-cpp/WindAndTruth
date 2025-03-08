@@ -90,7 +90,7 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void APlayerCharacterBase::Move(const FInputActionValue& Value)
 {
-	if (ActionState != EActionState::EAS_Unoccupied) return; //if in atacking/equiping weapon state leave this function
+	if (ActionState == EActionState::EAS_Attacking) return; //if in atacking/equiping weapon state leave this function
 	const FVector2D Direction = Value.Get<FVector2D>();
 	if (Controller)
 	{
@@ -148,13 +148,13 @@ void APlayerCharacterBase::EquipWeaponFromBack(const FInputActionValue& Value)
 	{
 		PlayEquipMontage(FName("Unequip"));
 		CharacterState = ECharacterState::ECS_Unequipped;
-		ActionState = EActionState::EAS_EquippingWeapon;
+		//ActionState = EActionState::EAS_EquippingWeapon;
 	}
 	else if (CanArm())
 	{
 		PlayEquipMontage(FName("Equip"));
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-		ActionState = EActionState::EAS_EquippingWeapon;
+		//ActionState = EActionState::EAS_EquippingWeapon;
 	}
 	
 }
@@ -175,12 +175,12 @@ void APlayerCharacterBase::ArmWeapon()
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
 	}
 }
-
+/*
 void APlayerCharacterBase::FinishEquipping()
 {
 	ActionState = EActionState::EAS_Unoccupied;
 }
-
+*/
 void APlayerCharacterBase::PlayAttackMontage()
 {
 	//GetPlayer Mesh and get AnimInstance
