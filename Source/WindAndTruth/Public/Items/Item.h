@@ -8,6 +8,14 @@
 
 class USphereComponent;
 
+
+enum class EItemState : uint8
+{
+	EIS_Hovering,
+	EIS_Equipped,
+};
+
+
 UCLASS()
 class WINDANDTRUTH_API AItem : public AActor
 {
@@ -42,6 +50,8 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) //without uprop GarbageCollector will simply destroy it, because it's null pointer
 		UStaticMeshComponent* ItemMesh;
+
+	EItemState ItemState = EItemState::EIS_Hovering; //Set Default state
 private:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
 	float RunningTime;

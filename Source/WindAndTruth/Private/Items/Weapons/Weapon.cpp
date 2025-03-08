@@ -23,4 +23,5 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 	//Enum for how to Attach to target
 	FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
+	ItemState = EItemState::EIS_Equipped;
 }

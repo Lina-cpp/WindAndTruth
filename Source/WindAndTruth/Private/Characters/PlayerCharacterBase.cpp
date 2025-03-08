@@ -137,30 +137,53 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 
 void APlayerCharacterBase::Attack(const FInputActionValue& Value)
 {
+
+	if (CanAttack()) //call bool function can attack
+	{
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+	}
+}
+
+bool APlayerCharacterBase::CanAttack()
+{
+	return ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped;
+}
+
+void APlayerCharacterBase::PlayAttackMontage()
+{
 	//GetPlayer Mesh and get AnimInstance
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage) //check if AnimInstance is valid and if AttackMontage isn't nullptr
 	{
 		//how it works - get random number, then play matching section from AM_Attack
 		AnimInstance->Montage_Play(AttackMontage);
-		int32 Selection = FMath::RandRange(0,2); //random number (rn 3 because I have 3 attack anims)
+		const int32 Selection = FMath::RandRange(0,2); //random number (rn 3 because I have 3 attack anims)
 		FName SectionName = FName(); //Clear FName, to overwrite in switch
 		switch (Selection)
 		{
-			case 0:
+		case 0:
 			SectionName = 	FName("Attack1");
-				break;
-			case 1:
-				SectionName = 	FName("Attack2");
-				break;
-			case 2:
-				SectionName = 	FName("Attack3");
-				break;
+			break;
+		case 1:
+			SectionName = 	FName("Attack2");
+			break;
+		case 2:
+			SectionName = 	FName("Attack3");
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
+		//Jump to Section in Montage and play
 		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
-		
 	}
 }
+
+void APlayerCharacterBase::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify
+}
+
+

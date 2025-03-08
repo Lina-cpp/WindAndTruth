@@ -32,8 +32,15 @@ void AItem::BeginPlay()
 void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
 	RunningTime += DeltaTime;
+
+	//Hovering Logic
+	//Check if is in hovering state, if yes, hover - For weapon, State is changed in AWeapon::Equip
+	if (ItemState == EItemState::EIS_Hovering)
+	{
+		AddActorWorldOffset(FVector(0.f, 0.f,TransformedSin()));	
+	}
+	
 }
 
 
@@ -41,14 +48,17 @@ float AItem::TransformedSin()
 {
 	return Amplitude * FMath::Sin(RunningTime * TimeConstant);
 }
-
 float AItem::TransformedCosin()
 {
 	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
 }
 
+
+/**
+ * OverlapEvents 
+**/
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	APlayerCharacterBase* PlayerCharacterBase = Cast<APlayerCharacterBase>(OtherActor); //On Overlap cast to PlayerCharacter
 	if (PlayerCharacterBase)
@@ -57,7 +67,6 @@ void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 		
 	}
 }
-
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {

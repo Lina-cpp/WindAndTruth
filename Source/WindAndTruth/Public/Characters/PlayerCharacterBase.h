@@ -32,7 +32,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// InputMappings
+/**
+*	InputMappings and it's functions
+**/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputMappingContext* PlayerContextMapping;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -50,7 +52,22 @@ protected:
 		UInputAction* AttackAction;
 			void Attack(const FInputActionValue& Value);
 
+
+	
+/**
+*	Play montage functions
+**/
+	void PlayAttackMontage();
+	UFUNCTION(BlueprintCallable)
+	void AttackEnd();
+	bool CanAttack();
+
+
+	
 private:
+/**
+* Character Components
+**/	
 	//Grooms
 	UPROPERTY(VisibleAnywhere, Category = Hair)
 		UGroomComponent* Hair;
@@ -63,14 +80,20 @@ private:
 		UCameraComponent* ViewCamera;
 	UPROPERTY(VisibleInstanceOnly)
 		AItem* OverlappingItem; //Ref to an item we are overlapping right now
-	//Default Character State
+
+	
+/**
+* ENUMS
+**/
 	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	EActionState ActionState = EActionState::EAS_Unoccupied;
 
 
 	
-	/**
-	 * Animation Montages
-	 **/
+/**
+* Animation Montages
+**/
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 		UAnimMontage* AttackMontage;
 
