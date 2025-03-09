@@ -59,10 +59,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
 	float RunningTime;
 
-	UPROPERTY(VisibleAnywhere)
-		USceneComponent* Root;
-
-
 };
 
 template <typename T>

@@ -5,6 +5,14 @@
 #include "Characters/PlayerCharacterBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
+
+AWeapon::AWeapon()
+{
+	WeaponBox = CreateDefaultSubobject<UBoxComponent>("WeaponBox");
+		WeaponBox->SetupAttachment(GetRootComponent());
+}
+
 
 
 void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -27,6 +35,8 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, FName InSocketName)
 	FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
 }
+
+
 
 void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 {
