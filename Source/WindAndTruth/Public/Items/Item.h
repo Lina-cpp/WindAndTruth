@@ -50,7 +50,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) //without uprop GarbageCollector will simply destroy it, because it's null pointer
 		UStaticMeshComponent* ItemMesh;
+	UPROPERTY(VisibleAnywhere)
+		USphereComponent* Sphere;
 
+	
 	EItemState ItemState = EItemState::EIS_Hovering; //Set Default state
 private:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sinus Settings", meta = (AllowPrivateAccess = "true"))
@@ -58,8 +61,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* Root;
-	UPROPERTY(VisibleAnywhere)
-		USphereComponent* Sphere;
+
 
 };
 
