@@ -6,26 +6,74 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AWeapon::AWeapon()
 {
+	//Collision box for Sword
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>("WeaponBox");
 		WeaponBox->SetupAttachment(GetRootComponent());
+		WeaponBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //SetCollision for Query Only
+		WeaponBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);//Set Coll overlap for all
+		WeaponBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore); //Ignore collision with PAWN
+
+	BoxTraceStart = CreateDefaultSubobject<USceneComponent>("BoxTraceStart");
+		BoxTraceStart->SetupAttachment(GetRootComponent());
+	BoxTraceEnd = CreateDefaultSubobject<USceneComponent>("BoxTraceEnd");
+		BoxTraceEnd->SetupAttachment(GetRootComponent());
+}
+
+
+void AWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//When wepon box begin overlap, use OnBoxOverlap()
+	WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnBoxOverlap);
 }
 
 
 
+
+/**
+ * Overlap Functions
+**/
 void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
-
 void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 }
+
+
+void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const FVector Start = BoxTraceStart->GetComponentLocation(); //Get StartComponent World Location and save it
+	const FVector End = BoxTraceEnd->GetComponentLocation(); //Get EndComponent World Location and save it
+	TArray<AActor*> ActorsToIgnore;	//Array of actors to ignore
+	ActorsToIgnore.Add(this); //Add this to array, so weapon will ignore itself
+	FHitResult BoxHit; //Out parameter, will be filled with info
+
+	UKismetSystemLibrary::BoxTraceSingle(this,
+		Start, End,
+		FVector(5.f, 5.f, 5.f),
+		BoxTraceStart->GetComponentRotation(),
+		ETraceTypeQuery::TraceTypeQuery1,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::ForDuration,
+		BoxHit,
+		true
+		);
+	
+}
+
+
 
 
 
