@@ -22,5 +22,5 @@ class WINDANDTRUTH_API IHitInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void GetHit() = 0; //pure function - can not be implemented in the class it which was declared 
+	virtual void GetHit(const FVector& ImpactPoint) = 0; //pure function - can not be implemented in the class it which was declared 
 };
