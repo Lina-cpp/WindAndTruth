@@ -211,7 +211,7 @@ void APlayerCharacterBase::PlayAttackMontage()
 	}
 }
 
-void APlayerCharacterBase::PlayEquipMontage(FName SectionName)
+void APlayerCharacterBase::PlayEquipMontage(const FName SectionName)
 {
 
 	//Get instance and play montage by section (Section is selected inEquipWeaponFromBack())

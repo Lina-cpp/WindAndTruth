@@ -37,9 +37,28 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+
+
+
+/**
+ *	Functions
+**/
+
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
 	DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
-	GEngine->AddOnScreenDebugMessage(12, 2, FColor::Cyan, FString("Macro activ"));
+	//GEngine->AddOnScreenDebugMessage(12, 2, FColor::Cyan, FString("Macro activ"));
+	PlayHitReactMontage(FName("FromLeft"));
 }
 
+
+void AEnemy::PlayHitReactMontage(const FName SectionName)
+{
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();	//get anim instance
+	if (AnimInstance && HitReactMontage) // check if AnimInstance is valid & AM is not null
+	{
+		AnimInstance->Montage_Play(HitReactMontage); //Play Montage
+		AnimInstance->Montage_JumpToSection(SectionName, HitReactMontage); //Jump to selected section
+	}
+}
