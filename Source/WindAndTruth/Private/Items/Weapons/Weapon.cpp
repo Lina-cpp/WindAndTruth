@@ -14,7 +14,7 @@ AWeapon::AWeapon()
 	//Collision box for Sword
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>("WeaponBox");
 		WeaponBox->SetupAttachment(GetRootComponent());
-		WeaponBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //SetCollision for Query Only
+		WeaponBox->SetCollisionEnabled(ECollisionEnabled::NoCollision); //No collision - Attacks will enable collision
 		WeaponBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);//Set Coll overlap for all
 		WeaponBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore); //Ignore collision with PAWN
 
@@ -56,10 +56,16 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	const FVector Start = BoxTraceStart->GetComponentLocation(); //Get StartComponent World Location and save it
 	const FVector End = BoxTraceEnd->GetComponentLocation(); //Get EndComponent World Location and save it
+	
 	TArray<AActor*> ActorsToIgnore;	//Array of actors to ignore
 	ActorsToIgnore.Add(this); //Add this to array, so weapon will ignore itself
-	FHitResult BoxHit; //Out parameter, will be filled with info
 
+	for (AActor* Actor : IgnoreActors) //loop will be executed once for each actor
+	{
+		ActorsToIgnore.AddUnique(Actor);
+	}
+	
+	FHitResult BoxHit; //Out parameter, will be filled with info
 	UKismetSystemLibrary::BoxTraceSingle(this,
 		Start, End,
 		FVector(5.f, 5.f, 5.f),
@@ -79,12 +85,16 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		{
 			HitInterface->GetHit(BoxHit.ImpactPoint); //if is valid, call GetHit and pass impact point vector
 		}
+		IgnoreActors.AddUnique(BoxHit.GetActor()); //Add Actor that got hit to Ignore, so we don't get multiple hits by one swing
 	}
 }
 
 
 
 
+/*
+ * Other Functions
+ */
 
 //Function that AttachesMesh to socket - used to attach weapon to hand and spine socket
 void AWeapon::AttachMeshToSocket(USceneComponent* InParent, FName InSocketName)
@@ -92,8 +102,6 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, FName InSocketName)
 	FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
 }
-
-
 
 void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 {

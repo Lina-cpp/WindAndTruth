@@ -19,6 +19,8 @@ public:
 	void Equip(USceneComponent* InParent, FName InSocketName);
 	void AttachMeshToSocket(USceneComponent* InParent, FName InSocketName);
 	
+	TArray<AActor*> IgnoreActors; //Array of actors for weapon to ignore. Used to prevent multiple hits from one swing
+	
 protected:
 	void BeginPlay() override;
 	
@@ -28,8 +30,9 @@ protected:
 
 	UFUNCTION() //WeaponBox Overlap
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	
-	
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 		USoundBase* EquipSound;
@@ -41,4 +44,13 @@ private:
 		USceneComponent* BoxTraceStart;
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* BoxTraceEnd;
+
+
+/*
+*	Setters & Getters
+*/
+public:
+	
+	FORCEINLINE UBoxComponent* GetWeaponBox() const {return WeaponBox;}
+	
 };

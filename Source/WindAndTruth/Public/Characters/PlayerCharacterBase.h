@@ -65,15 +65,25 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 	void PlayEquipMontage(const FName SectionName);
+
+	
+/**
+*	Weapon Functions
+**/
 	
 	bool CanAttack();
 	bool CanDisarm();
 	bool CanArm();
-
+	
+/**
+*	Weapon Anim Notifies
+**/
 	UFUNCTION(BlueprintCallable)
 	void Disarm(); // Attaches weapon to the back
 	UFUNCTION(BlueprintCallable)
 	void ArmWeapon();
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 	//UFUNCTION(BlueprintCallable) //in case if I'd like to force stop character while equiping weapon
 	//void FinishEquipping();
 

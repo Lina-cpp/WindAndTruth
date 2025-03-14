@@ -12,6 +12,7 @@
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
 #include "GroomComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -142,6 +143,10 @@ void APlayerCharacterBase::Attack(const FInputActionValue& Value)
 }
 
 
+/**
+*	Weapon Functions
+**/
+
 void APlayerCharacterBase::EquipWeaponFromBack(const FInputActionValue& Value)
 {
 	if (CanDisarm())
@@ -175,12 +180,33 @@ void APlayerCharacterBase::ArmWeapon()
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
 	}
 }
+
+void APlayerCharacterBase::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
+{
+	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled((CollisionEnabled)); //Enable/Disable Collision for weapon - ABP_Echo
+		EquippedWeapon->IgnoreActors.Empty(); //Clear Actors array
+	}
+}
+void APlayerCharacterBase::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify
+}
+
+
 /*
 void APlayerCharacterBase::FinishEquipping()
 {
 	ActionState = EActionState::EAS_Unoccupied;
 }
 */
+
+
+/*
+ *	Anim Montages Functions
+ */
+
 void APlayerCharacterBase::PlayAttackMontage()
 {
 	//GetPlayer Mesh and get AnimInstance
@@ -222,11 +248,6 @@ void APlayerCharacterBase::PlayEquipMontage(const FName SectionName)
 		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
 	}
 	
-}
-
-void APlayerCharacterBase::AttackEnd()
-{
-	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify
 }
 
 

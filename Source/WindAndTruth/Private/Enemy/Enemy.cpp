@@ -10,7 +10,7 @@
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	//Mesh collision settings
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
@@ -48,12 +48,16 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
 	DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
+	DirectionalHitReact(ImpactPoint);
+}
 
 
+void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
+{
 	const FVector Forward = GetActorForwardVector(); // get enemy's Forward Vector (it's already normalized)
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z); //debug for arrows
 	const FVector ToHit = (ImpactLowered - GetActorLocation()).GetSafeNormal(); //Vector location of ImpactPoint and ActorLocation (for DotProduct to calculate which anim to play)
-																			 // .GetSafeNormal to normalize vector
+	// .GetSafeNormal to normalize vector
 	// Forward * ToHit = |Forward||ToHit| * cos(theta)
 	// |Forward| = 1, |ToHit| = 1, so Forward * ToHit = cos(theta)
 	const double CosTheta = FVector::DotProduct(Forward, ToHit); //save DotProduct to Var
@@ -68,8 +72,14 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 		Theta *= -1.f;
 	}
 
-
-/*
+	FName Section("FromBack"); //Default Value of section, then we check theta
+	if (Theta >= -45.f && Theta < 45.f) Section = FName("FromFront");
+	else if (Theta >= -135.f && Theta < -45.f) Section = FName("FromLeft");
+	else if (Theta >= 45.f && Theta < 135.f) Section = FName("FromRight");
+	
+	PlayHitReactMontage(Section);
+	
+	/*
 * Debug
 */
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100, 15.f, FColor::Blue, 5.f );
@@ -79,16 +89,13 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 	}
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation()+Forward*60.f, 15.f, FColor::Red, 5.f );
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 15.f, FColor::Green, 5.f);
-
-	FName Section("FromBack"); //Default Value of section, then we check theta
-	if (Theta >= -45.f && Theta < 45.f) Section = FName("FromFront");
-	else if (Theta >= -135.f && Theta < -45.f) Section = FName("FromLeft");
-	else if (Theta >= 45.f && Theta < 135.f) Section = FName("FromRight");
-	
-	PlayHitReactMontage(Section);
 }
 
 
+
+/*
+ * Montages
+*/
 void AEnemy::PlayHitReactMontage(const FName SectionName)
 {
 	
