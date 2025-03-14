@@ -48,7 +48,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
 	DRAW_SPHERE_COLOR(ImpactPoint, FColor::Orange);
-	PlayHitReactMontage(FName("FromLeft"));
+
 
 	const FVector Forward = GetActorForwardVector(); // get enemy's Forward Vector (it's already normalized)
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z); //debug for arrows
@@ -67,17 +67,25 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 	{
 		Theta *= -1.f;
 	}
-	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100, 15.f, FColor::Blue, 5.f );
+
 
 /*
 * Debug
 */
+	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100, 15.f, FColor::Blue, 5.f );
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(1, 5, FColor::Red, FString::Printf(TEXT("Theta: %f"), Theta));
 	}
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation()+Forward*60.f, 15.f, FColor::Red, 5.f );
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 15.f, FColor::Green, 5.f);
+
+	FName Section("FromBack"); //Default Value of section, then we check theta
+	if (Theta >= -45.f && Theta < 45.f) Section = FName("FromFront");
+	else if (Theta >= -135.f && Theta < -45.f) Section = FName("FromLeft");
+	else if (Theta >= 45.f && Theta < 135.f) Section = FName("FromRight");
+	
+	PlayHitReactMontage(Section);
 }
 
 
