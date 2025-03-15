@@ -30,7 +30,7 @@ protected:
 **/
 	void PlayHitReactMontage(const FName SectionName);
 
-private:	
+private:
 /**
 * UAnimation Montages
 **/
@@ -38,5 +38,7 @@ private:
 	UAnimMontage* HitReactMontage;
 	UPROPERTY(EditDefaultsOnly, Category = Sounds)
 	USoundBase* HitSound;
+	UPROPERTY(EditAnywhere, Category = VFX)
+	UParticleSystem* HitParticle;
 
 };
