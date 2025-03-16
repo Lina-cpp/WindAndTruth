@@ -77,13 +77,13 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		BoxHit,
 		true
 		);
-	if ( BoxHit.GetActor())
+	if (BoxHit.GetActor())
 	{
 		//check if actor we hit has interface
 		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
 		if (HitInterface) //check if cast is not failed
 		{
-			HitInterface->GetHit(BoxHit.ImpactPoint); //if is valid, call GetHit and pass impact point vector
+			HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint); //since interface is native, call this to get it in cpp&bp
 		}
 		
 		IgnoreActors.AddUnique(BoxHit.GetActor()); //Add Actor that got hit to Ignore, so we don't get multiple hits by one swing

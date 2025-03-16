@@ -47,7 +47,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
  *	Functions
 **/
 
-void AEnemy::GetHit(const FVector& ImpactPoint)
+void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	DirectionalHitReact(ImpactPoint);
 	if (HitSound) UGameplayStatics::PlaySoundAtLocation(this, HitSound,ImpactPoint); //if valid, play sound at location
