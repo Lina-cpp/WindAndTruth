@@ -13,12 +13,12 @@ ABreakableActor::ABreakableActor()
 
 	GeometryCollection->SetGenerateOverlapEvents(true);	//Generate overlap events on default
 	GeometryCollection->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore); //Ignore camera
+
 }
 
 void ABreakableActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ABreakableActor::Tick(float DeltaTime)
@@ -31,4 +31,5 @@ void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	
 }
+
 

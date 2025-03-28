@@ -19,11 +19,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override; //Interafce Ovverride
+
+	
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UGeometryCollectionComponent* GeometryCollection;
 
 };
