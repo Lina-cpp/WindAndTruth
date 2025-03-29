@@ -31,7 +31,7 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UGeometryCollectionComponent* GeometryCollection;
 
-	//Wrapper + forward declaring ATreasure
+	//Array of treasures + wrapper + forward declaring ATreasure
 	UPROPERTY(EditAnywhere, Category= "Breakable Properties")
-	TSubclassOf<class ATreasure> TreasureClass;
+	TArray<TSubclassOf<class ATreasure>> TreasureClasses;
 };
