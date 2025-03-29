@@ -6,6 +6,7 @@
 #include "WindAndTruth/DebugMacros.h"
 #include "Components/SphereComponent.h"
 #include "Characters/PlayerCharacterBase.h"
+#include "NiagaraComponent.h"
 
 
 
@@ -17,6 +18,9 @@ AItem::AItem()
 		RootComponent = ItemMesh;
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 		Sphere->SetupAttachment(RootComponent);
+
+	PickupEffect = CreateDefaultSubobject<UNiagaraComponent>("PickupEffect");
+		PickupEffect->SetupAttachment(RootComponent);
 }
 
 void AItem::BeginPlay()

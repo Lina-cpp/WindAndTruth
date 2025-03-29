@@ -52,7 +52,8 @@ protected:
 		UStaticMeshComponent* ItemMesh;
 	UPROPERTY(VisibleAnywhere)
 		USphereComponent* Sphere;
-
+	UPROPERTY(EditAnywhere)
+		class UNiagaraComponent* PickupEffect;
 	
 	EItemState ItemState = EItemState::EIS_Hovering; //Set Default state
 private:	

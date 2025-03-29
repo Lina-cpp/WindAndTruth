@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/HitInterface.h"
+#include "NiagaraComponent.h"
 
 AWeapon::AWeapon()
 {
@@ -122,5 +123,9 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 	{
 		//When we pick up weapon, turn off sphere collision, so it won't call overlap events on attacks
 		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	if (PickupEffect)
+	{
+		PickupEffect->Deactivate(); //Deactivate on weapon equip
 	}
 }
