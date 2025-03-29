@@ -7,6 +7,7 @@
 #include "Interfaces/HitInterface.h"
 #include "BreakableActor.generated.h"
 
+struct FChaosBreakEvent;
 class UGeometryCollectionComponent;
 
 UCLASS()
@@ -27,6 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCapsuleComponent* Capsule;
 
+	UFUNCTION()
+	void OnBreakEvent(const FChaosBreakEvent& BreakEvent);
+
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UGeometryCollectionComponent* GeometryCollection;
@@ -34,4 +38,6 @@ private:
 	//Array of treasures + wrapper + forward declaring ATreasure
 	UPROPERTY(EditAnywhere, Category= "Breakable Properties")
 	TArray<TSubclassOf<class ATreasure>> TreasureClasses;
+
+	bool bBroken = false;
 };

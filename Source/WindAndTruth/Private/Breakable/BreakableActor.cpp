@@ -7,6 +7,7 @@
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Items/Treasure.h"
 
+
 ABreakableActor::ABreakableActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -26,7 +27,13 @@ ABreakableActor::ABreakableActor()
 void ABreakableActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GeometryCollection->OnChaosBreakEvent.AddDynamic(this, &ABreakableActor::OnBreakEvent);
 }
+
+
+
+
 
 void ABreakableActor::Tick(float DeltaTime)
 {
@@ -36,6 +43,15 @@ void ABreakableActor::Tick(float DeltaTime)
 
 void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
 {
+	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 5.f, FColor::Red, TEXT("CPP GetHit"));		
+}
+
+//spawn collectibles when object is damaged, so item will always spawn
+void ABreakableActor::OnBreakEvent(const FChaosBreakEvent& BreakEvent)
+{
+	GEngine->AddOnScreenDebugMessage(4, 5.f, FColor::Red, TEXT("OnBreakEvent"));
+	if (bBroken) return;
+	bBroken = true;
 	UWorld* World = GetWorld();
 	if (World && TreasureClasses.Num() > 0)
 	{
