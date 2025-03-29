@@ -20,5 +20,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = Sounds)
 	USoundBase* PickupSound;
+
+	UPROPERTY(EditAnywhere, Category = "Trasure Properties")
+	int32 Gold;
 	
 };
