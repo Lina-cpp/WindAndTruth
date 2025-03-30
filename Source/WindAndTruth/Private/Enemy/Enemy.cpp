@@ -37,6 +37,7 @@ void AEnemy::BeginPlay()
 	//Check HP and set bar correctly
 	if (Attributes && HealthBarWidget)
 	{
+		float HP = Attributes->GetHealthPercent();
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
 	}
 	
