@@ -8,6 +8,8 @@
 #include "WindAndTruth/DebugMacros.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AttributeComponent.h"
+#include "Components/WidgetComponent.h"
 
 AEnemy::AEnemy()
 {
@@ -19,6 +21,11 @@ AEnemy::AEnemy()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore); //ignore camera so there will not be any glitchy zooms
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+
+	//widgets and components
+	Attributes = CreateDefaultSubobject<UAttributeComponent>("Attributes");
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>("Health Bar");
+		HealthBarWidget->SetupAttachment(GetRootComponent());
 	
 }
 

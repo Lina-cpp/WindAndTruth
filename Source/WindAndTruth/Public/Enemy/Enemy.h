@@ -8,6 +8,8 @@
 #include "Enemy.generated.h"
 
 class UAnimMontage;
+class UAttributeComponent;
+class UWidgetComponent;
 
 UCLASS()
 class WINDANDTRUTH_API AEnemy : public ACharacter, public IHitInterface
@@ -31,6 +33,17 @@ protected:
 	void PlayHitReactMontage(const FName SectionName);
 
 private:
+/**
+*	Widgets and Components
+**/
+	UPROPERTY(VisibleAnywhere)
+	UAttributeComponent* Attributes;
+
+	UPROPERTY(VisibleAnywhere)
+	UWidgetComponent* HealthBarWidget;
+
+
+	
 /**
 * UAnimation Montages
 **/
