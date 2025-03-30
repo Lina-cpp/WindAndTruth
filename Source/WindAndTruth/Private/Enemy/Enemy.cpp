@@ -9,7 +9,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AttributeComponent.h"
-#include "Components/WidgetComponent.h"
+#include "HUD/HealthBarComponent.h"
+
 
 AEnemy::AEnemy()
 {
@@ -24,7 +25,7 @@ AEnemy::AEnemy()
 
 	//widgets and components
 	Attributes = CreateDefaultSubobject<UAttributeComponent>("Attributes");
-	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>("Health Bar");
+	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>("Health Bar");
 		HealthBarWidget->SetupAttachment(GetRootComponent());
 	
 }
@@ -32,6 +33,12 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Check HP and set bar correctly
+	if (Attributes && HealthBarWidget)
+	{
+		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+	}
 	
 }
 
@@ -101,6 +108,22 @@ void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 15.f, FColor::Green, 5.f);
 	*/	
 }
+
+float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	if (Attributes && HealthBarWidget) //check if attributes is valid (component with health)
+	{
+		Attributes->ReceiveDamage(DamageAmount); //Calculate damage based on input dmg and hp
+		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //update widget with matching %
+	}
+	return DamageAmount;
+}
+
+
+
+
+
 
 
 

@@ -78,6 +78,7 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		BoxHit,
 		true
 		);
+	//check if actor that got hit is valid
 	if (BoxHit.GetActor())
 	{
 		//check if actor we hit has interface
@@ -89,6 +90,14 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		
 		IgnoreActors.AddUnique(BoxHit.GetActor()); //Add Actor that got hit to Ignore, so we don't get multiple hits by one swing
 		CreateFields(BoxHit.ImpactPoint);
+
+		UGameplayStatics::ApplyDamage(
+			BoxHit.GetActor(), //actor that got hit
+			WeaponDamage,//Weapons Damage to deal
+			GetInstigator()->GetController(), //Get controller of pawn that owns weapon and apllied hit in this case - player
+			this, //Actor that caused damage (this) weapon
+			UDamageType::StaticClass() //Damage type class
+		);
 	}
 }
 
@@ -106,8 +115,12 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, FName InSocketName)
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
 }
 
-void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
+void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator)
 {
+	SetOwner(NewOwner);
+	SetInstigator(NewInstigator);
+
+	
 	//Enum for how to Attach to target
 	AttachMeshToSocket(InParent, InSocketName);
 	ItemState = EItemState::EIS_Equipped;

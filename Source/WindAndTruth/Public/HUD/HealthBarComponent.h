@@ -13,5 +13,9 @@ UCLASS()
 class WINDANDTRUTH_API UHealthBarComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
-	
+public:
+	void SetHealthPercent(float Percent);
+private:
+	UPROPERTY()
+	class UHealthBar* HealthBarWidget; //member var of health bar
 };

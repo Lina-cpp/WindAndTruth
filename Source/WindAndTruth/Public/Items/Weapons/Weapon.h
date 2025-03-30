@@ -16,7 +16,7 @@ class WINDANDTRUTH_API AWeapon : public AItem
 public:
 	AWeapon(); //Constructor
 	
-	void Equip(USceneComponent* InParent, FName InSocketName);
+	void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
 	void AttachMeshToSocket(USceneComponent* InParent, FName InSocketName);
 	
 	TArray<AActor*> IgnoreActors; //Array of actors for weapon to ignore. Used to prevent multiple hits from one swing
@@ -45,7 +45,8 @@ private:
 		USceneComponent* BoxTraceStart;
 	UPROPERTY(VisibleAnywhere)
 		USceneComponent* BoxTraceEnd;
-
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	float WeaponDamage = 20;
 
 /*
 *	Setters & Getters
