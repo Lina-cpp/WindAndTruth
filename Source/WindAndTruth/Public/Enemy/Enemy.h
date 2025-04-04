@@ -29,11 +29,14 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+
+
 	
 /**
 *	Play montage functions
 **/
 	void PlayHitReactMontage(const FName SectionName);
+	void Die();
 
 private:
 /**
@@ -52,6 +55,8 @@ private:
 **/
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* HitReactMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* DeathMontage;
 	UPROPERTY(EditDefaultsOnly, Category = Sounds)
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, Category = VFX)

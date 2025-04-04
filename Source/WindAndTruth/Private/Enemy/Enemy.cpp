@@ -64,7 +64,16 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	DirectionalHitReact(ImpactPoint);
+	//After appling dmg, check is Character Alive and decide what anim to play
+	if ( Attributes && Attributes->IsAlive())
+	{
+		DirectionalHitReact(ImpactPoint);
+	}
+	else
+	{
+		Die();
+	}
+
 	if (HitSound) UGameplayStatics::PlaySoundAtLocation(this, HitSound,ImpactPoint); //if valid, play sound at location
 	if (HitParticle) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, ImpactPoint);
 }
@@ -131,6 +140,45 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 /*
  * Montages
 */
+
+void AEnemy::Die()
+{
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DeathMontage)
+	{
+		AnimInstance->Montage_Play(DeathMontage); //play montage
+
+		//get random anim to play
+		const int32 Selection = FMath::RandRange(0,2); //random number (depends on how many anims I have)
+		FName SectionName = FName(); //Clear FName, to overwrite in switch
+		switch (Selection)
+		{
+		case 0:
+			SectionName = 	FName("Death1");
+			break;
+		case 1:
+			SectionName = 	FName("Death2");
+			break;
+		case 2:
+			SectionName = 	FName("Death3");
+			break;
+		case 3:
+			SectionName = 	FName("Death4");
+			break;
+		case 4:
+			SectionName = 	FName("Death5");
+			break;
+			
+		default:
+			break;
+		}
+		
+		AnimInstance->Montage_JumpToSection(SectionName);
+	}
+}
+
+
 void AEnemy::PlayHitReactMontage(const FName SectionName)
 {
 	

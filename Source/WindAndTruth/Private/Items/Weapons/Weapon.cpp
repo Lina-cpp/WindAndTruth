@@ -81,6 +81,14 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	//check if actor that got hit is valid
 	if (BoxHit.GetActor())
 	{
+		UGameplayStatics::ApplyDamage(
+			BoxHit.GetActor(), //actor that got hit
+			WeaponDamage,//Weapons Damage to deal
+			GetInstigator()->GetController(), //Get controller of pawn that owns weapon and apllied hit in this case - player
+			this, //Actor that caused damage (this) weapon
+			UDamageType::StaticClass() //Damage type class
+			);
+		
 		//check if actor we hit has interface
 		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
 		if (HitInterface) //check if cast is not failed
@@ -91,13 +99,7 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		IgnoreActors.AddUnique(BoxHit.GetActor()); //Add Actor that got hit to Ignore, so we don't get multiple hits by one swing
 		CreateFields(BoxHit.ImpactPoint);
 
-		UGameplayStatics::ApplyDamage(
-			BoxHit.GetActor(), //actor that got hit
-			WeaponDamage,//Weapons Damage to deal
-			GetInstigator()->GetController(), //Get controller of pawn that owns weapon and apllied hit in this case - player
-			this, //Actor that caused damage (this) weapon
-			UDamageType::StaticClass() //Damage type class
-		);
+
 	}
 }
 
