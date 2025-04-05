@@ -181,6 +181,8 @@ void AEnemy::Die()
 		
 		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 	}
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
 }
 
 
