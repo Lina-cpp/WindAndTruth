@@ -37,8 +37,10 @@ void AEnemy::BeginPlay()
 	//Check HP and set bar correctly
 	if (Attributes && HealthBarWidget)
 	{
-		float HP = Attributes->GetHealthPercent();
-		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+		HealthBarWidget->SetVisibility(false);// Hide HealthBar from Screen
+		//Good way to prevent optimization problems, should be creating HP widget on hit, and calculate hp
+		//In case of a lot of npc on map this can turn into Dragons Dogma 2 problem
+		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //calculate hp % to display properly
 	}
 	
 }
@@ -46,6 +48,19 @@ void AEnemy::BeginPlay()
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (CombatTarget && HealthBarWidget)
+	{
+		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size(); //Distance between Enemy and Player
+		if (DistanceToTarget > CombatRadius)
+		{
+			CombatTarget = nullptr; //If player is further than Radius, lose interest and hide healthbar
+			if (HealthBarWidget)
+			{
+				HealthBarWidget->SetVisibility(false);
+			}
+		}
+	}
 
 }
 
@@ -64,7 +79,11 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	//After appling dmg, check is Character Alive and decide what anim to play
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(true); //show healthbar when enemy got hit
+	}
+	//After applying dmg, check is Character Alive and decide what anim to play
 	if ( Attributes && Attributes->IsAlive())
 	{
 		DirectionalHitReact(ImpactPoint);
@@ -127,6 +146,7 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 		Attributes->ReceiveDamage(DamageAmount); //Calculate damage based on input dmg and hp
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //update widget with matching %
 	}
+	CombatTarget = EventInstigator->GetPawn(); //Store dmg causer (player) to combat target
 	return DamageAmount;
 }
 
@@ -181,8 +201,14 @@ void AEnemy::Die()
 		
 		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 	}
+	
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false); //Hide healthBar when enemy Diesw
+	}
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
+	SetLifeSpan(5.f); //Destroy actor after 3s of being dead
 }
 
 

@@ -43,6 +43,14 @@ protected:
 
 private:
 
+	
+/**
+*	Combat Target And Radius
+**/
+	UPROPERTY()
+	AActor* CombatTarget;
+	UPROPERTY()
+	double CombatRadius = 500.f;
 
 	
 /**
