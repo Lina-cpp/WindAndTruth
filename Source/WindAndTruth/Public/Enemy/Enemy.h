@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/HitInterface.h"
+#include "Characters/CharacterTypes.h" //include for ENUM
+
 #include "Enemy.generated.h"
 
 class UAnimMontage;
@@ -30,7 +32,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-
+	UPROPERTY(BlueprintReadOnly)
+	EDeathPose DeathPose = EDeathPose::EDP_Alive; //DeathPose enum, to play right anim
 	
 /**
 *	Play montage functions
@@ -39,6 +42,9 @@ protected:
 	void Die();
 
 private:
+
+
+	
 /**
 *	Widgets and Components
 **/
