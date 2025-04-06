@@ -9,7 +9,11 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AttributeComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "HUD/HealthBarComponent.h"
+#include "Runtime/AIModule/Classes/AIController.h"
+#include "AIController.h"
+#include "Navigation/PathFollowingComponent.h"
 
 
 AEnemy::AEnemy()
@@ -27,7 +31,12 @@ AEnemy::AEnemy()
 	Attributes = CreateDefaultSubobject<UAttributeComponent>("Attributes");
 	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>("Health Bar");
 		HealthBarWidget->SetupAttachment(GetRootComponent());
-	
+
+	//Rotations for enemy movement, so they will rotate in side they are moving
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 }
 
 void AEnemy::BeginPlay()
@@ -42,6 +51,24 @@ void AEnemy::BeginPlay()
 		//In case of a lot of npc on map this can turn into Dragons Dogma 2 problem
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //calculate hp % to display properly
 	}
+
+	EnemyController = Cast<AAIController>(GetController()); //cast to AI controller with get controller
+	if (EnemyController && PatrolTarget)
+	{
+		FAIMoveRequest MoveRequest;				//Create Request for AIMoveTo
+		MoveRequest.SetGoalActor(PatrolTarget);	//Set Destination
+		MoveRequest.SetAcceptanceRadius(15.f);	//Radius of the dest. point that will count as destination
+		FNavPathSharedPtr NavPath;	//wrapper for FNavigationPath
+		EnemyController->MoveTo(MoveRequest, &NavPath);
+
+		TArray<FNavPathPoint> &PathPoints = NavPath->GetPathPoints(); //displays all navigation point needed for AI to reach destination
+		for (auto& Point : PathPoints)
+		{
+			const FVector& Location = Point.Location;
+			DrawDebugSphere(GetWorld(), Location, 12.f, 12, FColor::Green, false, 10.f);
+		}
+	}
+	
 	
 }
 
