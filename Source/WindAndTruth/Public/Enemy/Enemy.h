@@ -31,10 +31,26 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-	
-	UFUNCTION()
-	bool InTargetRange(AActor* Target, double Radius);
+	void CheckPatrolTarget();
+	void CheckCombatTarget();
 
+
+	/** 
+*	Navigation
+**/
+	bool InTargetRange(AActor* Target, double Radius);
+	void MoveToTarget(AActor* Target);
+
+	AActor* ChoosePatrolTarget();
+	
+	FTimerHandle PatrolTimer;
+	void PatrolTimerFinished();
+
+
+	
+
+
+	
 	//DeathPose enum, to play right anim
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
@@ -69,7 +85,13 @@ private:
 		TArray<AActor*> PatrolTargets; 	//All targets for AI to patrol
 	UPROPERTY(EditAnywhere)
 		double PatrolRadius = 200.f;
-	
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+		float MinMoveWait = 3.f;
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+		float MaxMoveWait = 6.f;
+
+
+
 
 	
 /**
@@ -96,4 +118,5 @@ private:
 	UParticleSystem* HitParticle;
 
 };
+
 
