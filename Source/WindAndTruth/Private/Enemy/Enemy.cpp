@@ -13,6 +13,7 @@
 #include "HUD/HealthBarComponent.h"
 #include "Runtime/AIModule/Classes/AIController.h"
 #include "AIController.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Navigation/PathFollowingComponent.h"
 
 
@@ -72,14 +73,16 @@ void AEnemy::BeginPlay()
 	
 }
 
+
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	//Check if Enemy is in Combat Radius, if not - stop following and hide Healthbar
 	if (CombatTarget && HealthBarWidget)
 	{
-		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size(); //Distance between Enemy and Player
-		if (DistanceToTarget > CombatRadius)
+		if (!InTargetRange(CombatTarget, CombatRadius)) 
 		{
 			CombatTarget = nullptr; //If player is further than Radius, lose interest and hide healthbar
 			if (HealthBarWidget)
@@ -89,7 +92,39 @@ void AEnemy::Tick(float DeltaTime)
 		}
 	}
 
+	if (PatrolTarget && EnemyController)
+	{
+			//Check if Enemy reached Patrol Target
+			if (InTargetRange(PatrolTarget, PatrolRadius))
+			{
+				//Prevent from picking the same patrol point again
+				TArray<AActor*> ValidTargets;
+				for (AActor* Target : PatrolTargets) //for loop for amount of TargetPatrolPoints
+				{
+					if (Target != PatrolTarget) //check if Target is not the same as PatrolTarget
+					{
+						ValidTargets.AddUnique(Target);
+					}	
+				}
+
+
+				
+				const int32 NumPatrolTargets = ValidTargets.Num(); //Num of elements, indexing starts from 0
+				if (NumPatrolTargets > 0)
+				{
+					const int32 TargetSelection = FMath::RandRange(0, NumPatrolTargets - 1); //so -1
+					AActor* Target = ValidTargets[TargetSelection]; //Save PatrolTarget as Actor
+					PatrolTarget = Target; // Set this actor as new target
+
+					FAIMoveRequest MoveRequest;				//Create Request for AIMoveTo
+					MoveRequest.SetGoalActor(PatrolTarget);	//Set Destination
+					MoveRequest.SetAcceptanceRadius(15.f);	//Radius of the dest. point that will count as destination
+					EnemyController->MoveTo(MoveRequest);
+					}
+				}
+			}
 }
+
 
 void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -178,7 +213,22 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 }
 
 
+/*
+*	Bool Functions
+*/
 
+
+bool AEnemy::InTargetRange(AActor* Target, double Radius)
+{
+	//Distance between Enemy and Player
+	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+
+	//Debug
+	DRAW_SPHERE_SingleFrame(GetActorLocation())
+	DRAW_SPHERE_SingleFrame(Target->GetActorLocation())
+	
+	return DistanceToTarget <= Radius;
+}
 
 
 

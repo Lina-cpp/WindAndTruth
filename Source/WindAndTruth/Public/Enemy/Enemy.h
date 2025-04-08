@@ -31,9 +31,13 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	
+	UFUNCTION()
+	bool InTargetRange(AActor* Target, double Radius);
 
+	//DeathPose enum, to play right anim
 	UPROPERTY(BlueprintReadOnly)
-	EDeathPose DeathPose = EDeathPose::EDP_Alive; //DeathPose enum, to play right anim
+	EDeathPose DeathPose = EDeathPose::EDP_Alive;
 	
 /**
 *	Play montage functions
@@ -49,7 +53,7 @@ private:
 **/
 	UPROPERTY()
 	AActor* CombatTarget;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	double CombatRadius = 500.f;
 
 	
@@ -63,7 +67,8 @@ private:
 		AActor* PatrolTarget; 	//Current Patrol Target
 	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
 		TArray<AActor*> PatrolTargets; 	//All targets for AI to patrol
-
+	UPROPERTY(EditAnywhere)
+		double PatrolRadius = 200.f;
 	
 
 	
