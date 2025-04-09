@@ -12,6 +12,7 @@
 class UAnimMontage;
 class UAttributeComponent;
 class UHealthBarComponent;
+class UPawnSensingComponent;
 
 UCLASS()
 class WINDANDTRUTH_API AEnemy : public ACharacter, public IHitInterface
@@ -46,14 +47,18 @@ protected:
 	FTimerHandle PatrolTimer;
 	void PatrolTimerFinished();
 
+	UFUNCTION()
+	void PawnSeen(APawn* SeenPawn);
 
-	
+
 
 
 	
 	//DeathPose enum, to play right anim
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
+
+	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 	
 /**
 *	Play montage functions
@@ -61,9 +66,10 @@ protected:
 	void PlayHitReactMontage(const FName SectionName);
 	void Die();
 
-private:
 
 	
+private:
+
 /**
 *	Combat Target And Radius
 **/
@@ -102,6 +108,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;
+	
+	UPROPERTY(VisibleAnywhere)
+	UPawnSensingComponent* PawnSensing;
 
 
 	

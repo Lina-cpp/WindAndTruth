@@ -2,19 +2,25 @@
 
 
 #include "Enemy/Enemy.h"
+#include "AIController.h"
+#include "Characters/PlayerCharacterBase.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/AttributeComponent.h"
+
 #include "Kismet/GameplayStatics.h"
-#include "WindAndTruth/DebugMacros.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "Components/AttributeComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+
 #include "HUD/HealthBarComponent.h"
 #include "Runtime/AIModule/Classes/AIController.h"
-#include "AIController.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Perception/PawnSensingComponent.h"
+
+#include "WindAndTruth/DebugMacros.h"
 
 
 AEnemy::AEnemy()
@@ -38,12 +44,23 @@ AEnemy::AEnemy()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	//PawnSensing Component ("eyes of npc")
+	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensing");
+		PawnSensing->SightRadius = 4000.f;
+		PawnSensing->SetPeripheralVisionAngle(45.f);
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (PawnSensing)
+	{
+		PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
+	}
+
+	
 	//Check HP and set bar correctly
 	if (Attributes && HealthBarWidget)
 	{
@@ -66,8 +83,17 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckCombatTarget();
-	CheckPatrolTarget();
+	
+	if (EnemyState > EEnemyState::EES_Patrolling)
+	{
+		CheckCombatTarget();		
+	}
+	else
+	{
+		CheckPatrolTarget();	
+	}
+
+
 }
 
 
@@ -85,6 +111,23 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::PatrolTimerFinished()
 {
 	MoveToTarget(PatrolTarget);
+}
+
+void AEnemy::PawnSeen(APawn* SeenPawn)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("PawnSeen"));
+	//check if seen pawn has tag (only player has this tag) - Tag added in PlayerCharBase.cpp in BeginPlay
+	if (EnemyState == EEnemyState::EES_Chasing) return; //if already in chase, leave function
+	if (SeenPawn->ActorHasTag(FName("Player")))
+	{
+		EnemyState = EEnemyState::EES_Chasing; //change state from patrol to chase
+		GetWorldTimerManager().ClearTimer(PatrolTimer); //Clear Patrol timer - won't move towards another point
+		GetCharacterMovement()->MaxWalkSpeed = 300.f; //Accelerate enemy
+		CombatTarget = SeenPawn; //Set combat Target to SeenPawn(Player)
+		MoveToTarget(CombatTarget); //Move Enemy to Combat target
+
+		UE_LOG(LogTemp, Warning, TEXT("Seen Pawn, Start Chasing"));
+	}
 }
 
 

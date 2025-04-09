@@ -46,6 +46,7 @@ APlayerCharacterBase::APlayerCharacterBase()
 void APlayerCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	//IMC - getting subsystem and ading IMC
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
@@ -54,6 +55,8 @@ void APlayerCharacterBase::BeginPlay()
 			Subsystem->AddMappingContext(PlayerContextMapping, 0);
 		}
 	}
+
+	Tags.Add(FName("Player")); //Tag - First use in Enemy.cpp to check is SeenPawn is Player
 	
 }
 
