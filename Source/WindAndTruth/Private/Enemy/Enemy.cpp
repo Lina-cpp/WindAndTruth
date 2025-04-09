@@ -274,12 +274,20 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 		Attributes->ReceiveDamage(DamageAmount); //Calculate damage based on input dmg and hp
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //update widget with matching %
 	}
+	
 	CombatTarget = EventInstigator->GetPawn(); //Store dmg causer (player) to combat target
+	EnemyState = EEnemyState::EES_Chasing; //Change Enemy State and make them chase player
+	MoveToTarget(CombatTarget);
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	
 	return DamageAmount;
 }
 
+
+
 void AEnemy::CheckCombatTarget()
 {
+	//Losing Interest when out of range
 	//Check if Enemy is in Combat Radius, if not - stop following and hide Healthbar
 	if (!InTargetRange(CombatTarget, CombatRadius)) 
 	{
@@ -294,6 +302,8 @@ void AEnemy::CheckCombatTarget()
 
 		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Lose Intereset")));
 	}
+
+	//chasing player
 	else if (!InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Chasing)
 	{
 		//Outside attack range but in chase radius
@@ -303,6 +313,8 @@ void AEnemy::CheckCombatTarget()
 
 		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Chase player")));
 	}
+
+	//attacking player
 	else if (InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Attacking)
 	{
 		//Inside attack range, so attack player
