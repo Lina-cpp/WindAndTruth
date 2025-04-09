@@ -92,7 +92,7 @@ void AEnemy::Tick(float DeltaTime)
 	{
 		CheckPatrolTarget();	
 	}
-
+	
 
 }
 
@@ -120,13 +120,16 @@ void AEnemy::PawnSeen(APawn* SeenPawn)
 	if (EnemyState == EEnemyState::EES_Chasing) return; //if already in chase, leave function
 	if (SeenPawn->ActorHasTag(FName("Player")))
 	{
-		EnemyState = EEnemyState::EES_Chasing; //change state from patrol to chase
 		GetWorldTimerManager().ClearTimer(PatrolTimer); //Clear Patrol timer - won't move towards another point
 		GetCharacterMovement()->MaxWalkSpeed = 300.f; //Accelerate enemy
 		CombatTarget = SeenPawn; //Set combat Target to SeenPawn(Player)
-		MoveToTarget(CombatTarget); //Move Enemy to Combat target
 
-		UE_LOG(LogTemp, Warning, TEXT("Seen Pawn, Start Chasing"));
+		if (EnemyState != EEnemyState::EES_Attacking) //if is not attacking
+		{
+			EnemyState = EEnemyState::EES_Chasing; //change state to chase
+			MoveToTarget(CombatTarget); //Move Enemy to Combat target
+			if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Pawn Seen, now Chase player")));
+		}
 	}
 }
 
@@ -285,6 +288,28 @@ void AEnemy::CheckCombatTarget()
 		{
 			HealthBarWidget->SetVisibility(false);
 		}
+		EnemyState = EEnemyState::EES_Patrolling; //back to patrolling on losing interest
+		GetCharacterMovement()->MaxWalkSpeed = 125.f; //Set Movement back to Patrolling Speed
+		MoveToTarget(PatrolTarget); //Back to Patrol Target
+
+		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Lose Intereset")));
+	}
+	else if (!InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Chasing)
+	{
+		//Outside attack range but in chase radius
+		EnemyState = EEnemyState::EES_Chasing;
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		MoveToTarget(CombatTarget);
+
+		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Chase player")));
+	}
+	else if (InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Attacking)
+	{
+		//Inside attack range, so attack player
+		EnemyState = EEnemyState::EES_Attacking;
+		//TODO Play attack montage
+
+		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Attack")));
 	}
 }
 
