@@ -75,8 +75,7 @@ protected:
 	bool CanDisarm();
 	bool CanArm();
 	
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	AWeapon* EquippedWeapon;
+
 
 /**
 *	Weapon Anim Notifies
@@ -85,8 +84,7 @@ protected:
 	void Disarm(); // Attaches weapon to the back
 	UFUNCTION(BlueprintCallable)
 	void ArmWeapon();
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
+
 	//UFUNCTION(BlueprintCallable) //in case if I'd like to force stop character while equiping weapon
 	//void FinishEquipping();
 

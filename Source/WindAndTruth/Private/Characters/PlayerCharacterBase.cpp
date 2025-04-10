@@ -184,14 +184,6 @@ void APlayerCharacterBase::ArmWeapon()
 	}
 }
 
-void APlayerCharacterBase::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
-{
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled((CollisionEnabled)); //Enable/Disable Collision for weapon - ABP_Echo
-		EquippedWeapon->IgnoreActors.Empty(); //Clear Actors array
-	}
-}
 void APlayerCharacterBase::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify

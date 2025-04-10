@@ -2,8 +2,10 @@
 
 
 #include "Characters/BaseCharacter.h"
+#include "Items/Weapons/Weapon.h" //weapon
+#include "Components/BoxComponent.h" //for weapon box
 
-// Sets default values
+
 ABaseCharacter::ABaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,9 +24,12 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 }
 
-void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABaseCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled((CollisionEnabled)); //Enable/Disable Collision for weapon - ABP_Echo
+		EquippedWeapon->IgnoreActors.Empty(); //Clear Actors array
+	}
 }
 
