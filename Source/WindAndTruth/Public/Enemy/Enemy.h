@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Characters/BaseCharacter.h"
 #include "Interfaces/HitInterface.h"
 #include "Characters/CharacterTypes.h" //include for ENUM
 
@@ -15,7 +15,7 @@ class UHealthBarComponent;
 class UPawnSensingComponent;
 
 UCLASS()
-class WINDANDTRUTH_API AEnemy : public ACharacter, public IHitInterface
+class WINDANDTRUTH_API AEnemy : public ABaseCharacter, public IHitInterface
 {
 	GENERATED_BODY()
 
@@ -32,9 +32,10 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	
+	
 	void CheckPatrolTarget();
 	void CheckCombatTarget();
-
 
 	/** 
 *	Navigation

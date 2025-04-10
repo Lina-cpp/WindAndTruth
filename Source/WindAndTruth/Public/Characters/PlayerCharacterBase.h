@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "Pawns/PosesPawns.h"
 #include "CharacterTypes.h"
+#include "BaseCharacter.h"
 
 #include "PlayerCharacterBase.generated.h"
 
@@ -21,7 +21,7 @@ class AWeapon;
 
 
 UCLASS()
-class WINDANDTRUTH_API APlayerCharacterBase : public ACharacter
+class WINDANDTRUTH_API APlayerCharacterBase : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -75,6 +75,9 @@ protected:
 	bool CanDisarm();
 	bool CanArm();
 	
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	AWeapon* EquippedWeapon;
+
 /**
 *	Weapon Anim Notifies
 **/
@@ -122,9 +125,6 @@ private:
 		UAnimMontage* AttackMontage;
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 		UAnimMontage* EquipMontage;
-	
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	AWeapon* EquippedWeapon;
 
 	
 public:
