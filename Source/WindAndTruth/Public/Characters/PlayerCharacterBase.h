@@ -51,7 +51,7 @@ protected:
 			void Interaction(const FInputActionValue& Value);
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* AttackAction;
-			void Attack(const FInputActionValue& Value);
+			void AttackInput(const FInputActionValue& Value);
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* WeaponEquip;
 			void EquipWeaponFromBack(const FInputActionValue& Value);
@@ -74,6 +74,7 @@ protected:
 	bool CanAttack();
 	bool CanDisarm();
 	bool CanArm();
+	void Attack();
 	
 
 

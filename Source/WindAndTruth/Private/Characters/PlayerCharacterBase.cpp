@@ -135,14 +135,9 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));
 }
 
-void APlayerCharacterBase::Attack(const FInputActionValue& Value)
+void APlayerCharacterBase::AttackInput(const FInputActionValue& Value)
 {
-
-	if (CanAttack()) //call bool function can attack
-	{
-		PlayAttackMontage();
-		ActionState = EActionState::EAS_Attacking;
-	}
+	Attack();
 }
 
 
@@ -181,6 +176,15 @@ void APlayerCharacterBase::ArmWeapon()
 	if (EquippedWeapon)
 	{
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
+void APlayerCharacterBase::Attack()
+{
+	if (CanAttack()) //call bool function can attack
+	{
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
 	}
 }
 
@@ -269,3 +273,5 @@ bool APlayerCharacterBase::CanArm()
 	CharacterState == ECharacterState::ECS_Unequipped &&
 	EquippedWeapon;
 }
+
+
