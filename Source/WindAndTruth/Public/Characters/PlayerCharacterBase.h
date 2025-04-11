@@ -17,7 +17,6 @@ class UInputAction;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
-class AWeapon;
 
 
 UCLASS()
@@ -61,9 +60,8 @@ protected:
 /**
 *	Play montage functions
 **/
-	void PlayAttackMontage();
-	UFUNCTION(BlueprintCallable)
-	void AttackEnd();
+	virtual void PlayAttackMontage() override;
+	virtual void AttackEnd() override;
 	void PlayEquipMontage(const FName SectionName);
 
 	
@@ -71,10 +69,10 @@ protected:
 *	Weapon Functions
 **/
 	
-	bool CanAttack();
+	virtual bool CanAttack() override;
 	bool CanDisarm();
 	bool CanArm();
-	void Attack();
+	virtual void Attack() override;
 	
 
 
@@ -120,8 +118,6 @@ private:
 /**
 * Animation Montages
 **/
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-		UAnimMontage* AttackMontage;
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 		UAnimMontage* EquipMontage;
 

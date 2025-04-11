@@ -4,18 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Characters/BaseCharacter.h"
-#include "Interfaces/HitInterface.h"
 #include "Characters/CharacterTypes.h" //include for ENUM
 
 #include "Enemy.generated.h"
 
-class UAnimMontage;
-class UAttributeComponent;
 class UHealthBarComponent;
 class UPawnSensingComponent;
 
 UCLASS()
-class WINDANDTRUTH_API AEnemy : public ABaseCharacter, public IHitInterface
+class WINDANDTRUTH_API AEnemy : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -25,7 +22,6 @@ public:
 
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; //PlayerInputs
-	void DirectionalHitReact(const FVector& ImpactPoint); //Calculate from which side got hit
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override; //override interface function
 	//TakeDamage override (Actor virtual function)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
@@ -61,11 +57,7 @@ protected:
 
 	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 	
-/**
-*	Play montage functions
-**/
-	void PlayHitReactMontage(const FName SectionName);
-	void Die();
+	virtual void Die() override;
 
 
 	
@@ -103,31 +95,14 @@ private:
 
 
 	
-/**
-*	Widgets and Components
-**/
-	UPROPERTY(VisibleAnywhere)
-	UAttributeComponent* Attributes;
+
 
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;
 	
 	UPROPERTY(VisibleAnywhere)
 	UPawnSensingComponent* PawnSensing;
-
-
 	
-/**
-* UAnimation Montages
-**/
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* HitReactMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* DeathMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Sounds)
-	USoundBase* HitSound;
-	UPROPERTY(EditAnywhere, Category = VFX)
-	UParticleSystem* HitParticle;
 
 };
 
