@@ -25,7 +25,7 @@ public:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override; //override interface function
 	//TakeDamage override (Actor virtual function)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	virtual void Destroyed() override;
+	//virtual void Destroyed() override;
 	
 protected:
 	virtual void BeginPlay() override;

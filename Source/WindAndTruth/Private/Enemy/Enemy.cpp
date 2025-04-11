@@ -297,24 +297,16 @@ void AEnemy::CheckCombatTarget()
 
 
 
-
-
-
-
-
-
-
-
+/*
 void AEnemy::Destroyed()
 {
 	if (EquippedWeapon)
 	{
-		GetWorld()->SpawnActor<AWeapon>(WeaponClass, GetActorLocation(), FRotator(0, 0, 0));
 		EquippedWeapon->Destroy();
-		//GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Enemy Weapon Destroyed")));
 	}
-}
 
+}
+*/
 
 
 /*
@@ -364,10 +356,14 @@ void AEnemy::Die()
 	
 	if (HealthBarWidget)
 	{
-		HealthBarWidget->SetVisibility(false); //Hide healthBar when enemy Diesw
+		HealthBarWidget->SetVisibility(false); //Hide healthBar when enemy Dies
 	}
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
-	SetLifeSpan(5.f); //Destroy actor after 3s of being dead
+	SetLifeSpan(5.f); //Destroy actor after 5s of being dead
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->SetLifeSpan(5.f);
+	}
 }
 
