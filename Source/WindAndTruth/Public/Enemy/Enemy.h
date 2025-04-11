@@ -25,6 +25,7 @@ public:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override; //override interface function
 	//TakeDamage override (Actor virtual function)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void Destroyed() override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -91,11 +92,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "AI Navigation")
 		float MaxMoveWait = 6.f;
 
-
-
-
-	
-
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AWeapon> WeaponClass; //enemy weapon
 
 	UPROPERTY(VisibleAnywhere)
 	UHealthBarComponent* HealthBarWidget;

@@ -16,6 +16,8 @@ AItem::AItem()
 	
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent")); //Create statis mesh component
 		RootComponent = ItemMesh;
+	ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 		Sphere->SetupAttachment(RootComponent);
 

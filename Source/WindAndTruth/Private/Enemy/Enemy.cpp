@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AttributeComponent.h"
+#include "Items/Weapons/Weapon.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -54,6 +55,16 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UWorld* World = GetWorld();
+	if (World && WeaponClass)
+	{
+		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass); //spawn Weapon on BeginPlay
+		DefaultWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this); //equip weapon (aatach to socket)
+		EquippedWeapon = DefaultWeapon;
+	}
+
+
+	
 	if (PawnSensing)
 	{
 		PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
@@ -242,7 +253,6 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 }
 
 
-
 void AEnemy::CheckCombatTarget()
 {
 	//Losing Interest when out of range
@@ -295,6 +305,15 @@ void AEnemy::CheckCombatTarget()
 
 
 
+void AEnemy::Destroyed()
+{
+	if (EquippedWeapon)
+	{
+		GetWorld()->SpawnActor<AWeapon>(WeaponClass, GetActorLocation(), FRotator(0, 0, 0));
+		EquippedWeapon->Destroy();
+		//GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Enemy Weapon Destroyed")));
+	}
+}
 
 
 

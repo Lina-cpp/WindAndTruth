@@ -130,6 +130,7 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 	{
 		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
 		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+		OverlappingItem = nullptr;
 		EquippedWeapon = OverlappingWeapon;
 	}
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));
