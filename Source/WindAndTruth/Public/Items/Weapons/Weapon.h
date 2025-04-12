@@ -20,6 +20,9 @@ public:
 	void AttachMeshToSocket(USceneComponent* InParent, FName InSocketName);
 	
 	TArray<AActor*> IgnoreActors; //Array of actors for weapon to ignore. Used to prevent multiple hits from one swing
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = 0, ClampMax = 1))
+	float DropChance = 0.f;
 	
 protected:
 	void BeginPlay() override;

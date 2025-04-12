@@ -361,8 +361,22 @@ void AEnemy::Die()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
 	SetLifeSpan(5.f); //Destroy actor after 5s of being dead
+
+	//Rolling for Weapon Drop and destroying
 	if (EquippedWeapon)
 	{
+		float DropRoll = FMath::FRand();
+		if (DropRoll <= EquippedWeapon->DropChance)
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TEXT("U got The Weapon!")));
+			GetWorld()->SpawnActor<AWeapon>(WeaponClass, GetActorLocation(), FRotator(0.f, 0.f, 0.f));
+		}
+		else
+		{
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString(TEXT("No weapon!")));
+		}
+
+		
 		EquippedWeapon->SetLifeSpan(5.f);
 	}
 }
