@@ -174,7 +174,7 @@ void AEnemy::MoveToTarget(AActor* Target)
 	if (EnemyController == nullptr || Target == nullptr) return; //if controller or target is null, leave function
 	FAIMoveRequest MoveRequest;				//Create Request for AIMoveTo
 	MoveRequest.SetGoalActor(Target);	//Set Destination
-	MoveRequest.SetAcceptanceRadius(15.f);	//Radius of the dest. point that will count as destination
+	MoveRequest.SetAcceptanceRadius(60.f);	//Radius of the dest. point that will count as destination
 	EnemyController->MoveTo(MoveRequest);
 }
 
@@ -214,6 +214,12 @@ bool AEnemy::InTargetRange(AActor* Target, double Radius)
 /**
  *	Combat
 **/
+
+void AEnemy::Attack()
+{
+	PlayAttackMontage();
+}
+
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
@@ -255,41 +261,21 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 
 void AEnemy::CheckCombatTarget()
 {
-	//Losing Interest when out of range
-	//Check if Enemy is in Combat Radius, if not - stop following and hide Healthbar
-	if (!InTargetRange(CombatTarget, CombatRadius)) 
+	if (IsOutsideCombatRadius()) //Check if Enemy is in Combat Radius, if not - stop following and hide Healthbar
 	{
-		CombatTarget = nullptr; //If player is further than Radius, lose interest and hide healthbar
-		if (HealthBarWidget)
-		{
-			HealthBarWidget->SetVisibility(false);
-		}
-		EnemyState = EEnemyState::EES_Patrolling; //back to patrolling on losing interest
-		GetCharacterMovement()->MaxWalkSpeed = 125.f; //Set Movement back to Patrolling Speed
-		MoveToTarget(PatrolTarget); //Back to Patrol Target
-
-		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Lose Intereset")));
+		LoseInterest(); //Set CombatTarget to null and hide HealthBar
+		StartPatrolling(); //Change MoveSpeed and Go to patrolling targets
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Lose Intereset")));
 	}
-
-	//chasing player
-	else if (!InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Chasing)
+	else if (IsOutsideAttackRadius() && !IsChasing()) //chasing player
 	{
-		//Outside attack range but in chase radius
-		EnemyState = EEnemyState::EES_Chasing;
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
-		MoveToTarget(CombatTarget);
-
-		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Chase player")));
+		ChaseTarget();
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Chase player")));
 	}
-
-	//attacking player
-	else if (InTargetRange(CombatTarget, AttackRadius) && EnemyState != EEnemyState::EES_Attacking)
+	else if (IsInsideAttackRadius() && !IsAttacking()) //attacking player
 	{
-		//Inside attack range, so attack player
-		EnemyState = EEnemyState::EES_Attacking;
-		//TODO Play attack montage
-
-		if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Attack")));
+		StartAttackTimer();
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Blue, FString(TEXT("Attack")));
 	}
 }
 
@@ -381,3 +367,117 @@ void AEnemy::Die()
 	}
 }
 
+
+void AEnemy::PlayAttackMontage()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && AttackMontage) //check if AnimInstance is valid and if AttackMontage isn't nullptr
+	{
+		//how it works - get random number, then play matching section from AM_Attack
+		AnimInstance->Montage_Play(AttackMontage);
+		const int32 Selection = FMath::RandRange(0,1); //random number (rn 3 because I have 3 attack anims)
+		FName SectionName = FName(); //Clear FName, to overwrite in switch
+		switch (Selection)
+		{
+		case 0:
+			SectionName = 	FName("Attack1");
+			break;
+		case 1:
+			SectionName = 	FName("Attack2");
+			break;
+		default:
+			break;
+		}
+		//Jump to Section in Montage and play
+		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+	}
+}
+
+
+
+/*
+*	HealthBar
+*/
+
+void AEnemy::HideHealthBar()
+{
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
+}
+
+void AEnemy::ShowHealthBar()
+{
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(true);
+	}
+}
+
+
+/*
+*	Bool Funcions - Check Radius
+*/
+
+bool AEnemy::IsOutsideCombatRadius()
+{
+	return !InTargetRange(CombatTarget, CombatRadius);
+}
+
+bool AEnemy::IsOutsideAttackRadius()
+{
+	return !InTargetRange(CombatTarget, AttackRadius);
+}
+
+bool AEnemy::IsInsideAttackRadius()
+{
+	return InTargetRange(CombatTarget, AttackRadius);
+}
+
+bool AEnemy::IsChasing()
+{
+	return EnemyState == EEnemyState::EES_Chasing;
+}
+
+bool AEnemy::IsAttacking()
+{
+	return EnemyState == EEnemyState::EES_Attacking;
+}
+
+
+/*
+*	Enemy Behavior
+*/
+
+
+void AEnemy::LoseInterest()
+{
+	CombatTarget = nullptr; //If player is further than Radius, lose interest and hide healthbar
+	HideHealthBar();
+}
+
+void AEnemy::StartPatrolling()
+{
+	EnemyState = EEnemyState::EES_Patrolling; //back to patrolling on losing interest
+	GetCharacterMovement()->MaxWalkSpeed = PatrolingSpeed; //Set Movement back to Patrolling Speed
+	MoveToTarget(PatrolTarget); //Back to Patrol Target
+}
+
+void AEnemy::ChaseTarget()
+{
+	//Outside attack range but in chase radius
+	EnemyState = EEnemyState::EES_Chasing;
+	GetCharacterMovement()->MaxWalkSpeed = ChasingSpeed;
+	MoveToTarget(CombatTarget);
+}
+
+
+void AEnemy::StartAttackTimer()
+{
+	//Call Attack() when Timer Finished
+	EnemyState = EEnemyState::EES_Attacking;
+	const float AttackTime = FMath::RandRange(AttackMin, AttackMax);
+	GetWorldTimerManager().SetTimer(AttackTimer, this, &AEnemy::Attack, AttackTime);
+	
+}

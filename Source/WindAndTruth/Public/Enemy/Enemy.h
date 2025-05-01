@@ -30,11 +30,18 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
+/*
+*	Combat
+*/
+	virtual void Attack() override;
 	
 	void CheckPatrolTarget();
 	void CheckCombatTarget();
 
-	/** 
+		
+	virtual void Die() override;
+
+/** 
 *	Navigation
 **/
 	bool InTargetRange(AActor* Target, double Radius);
@@ -48,22 +55,51 @@ protected:
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
 
+	
+/*
+*	Montages
+*/
 
+	virtual void PlayAttackMontage() override;
 
 
 	
+
+/*
+*	Enums
+*/
+
 	//DeathPose enum, to play right anim
 	UPROPERTY(BlueprintReadOnly)
-	EDeathPose DeathPose = EDeathPose::EDP_Alive;
-
+	EDeathPose DeathPose;
+	UPROPERTY(BlueprintReadOnly)
 	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
-	
-	virtual void Die() override;
+
 
 
 	
 private:
 
+/** AI Behavior **/
+	void HideHealthBar();
+	void ShowHealthBar();
+	
+	void LoseInterest();
+	void StartPatrolling();
+	void ChaseTarget();
+	
+	bool IsOutsideCombatRadius();
+	bool IsOutsideAttackRadius();
+	bool IsInsideAttackRadius();
+
+	bool IsChasing();
+	bool IsAttacking();
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float PatrolingSpeed = 125.f;
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float ChasingSpeed = 300.f;
+	
 /**
 *	Combat Target And Radius
 **/
@@ -73,6 +109,13 @@ private:
 	double CombatRadius = 500.f;
 	UPROPERTY(EditAnywhere)
 	double AttackRadius = 150.f;
+
+	void StartAttackTimer();
+	FTimerHandle AttackTimer;
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float AttackMin = 0.5f;
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float AttackMax = 1.f;
 
 	
 /** 
