@@ -39,8 +39,12 @@ protected:
 
 	virtual bool CanAttack() override;
 	virtual void Die() override;
-
 	virtual void HandleDamage(float DamageAmount) override;
+
+	virtual int32 PlayDeathMontage() override;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	float DeathLifeSpan = 5.f;
 
 /** 
 *	Navigation
@@ -55,26 +59,17 @@ protected:
 
 	UFUNCTION()
 	void PawnSeen(APawn* SeenPawn);
-
 	
-/*
-*	Montages
-*/
-
-	virtual void PlayAttackMontage() override;
-
-
-	
-
 /*
 *	Enums
 */
 
 	//DeathPose enum, to play right anim
 	UPROPERTY(BlueprintReadOnly)
-	EDeathPose DeathPose;
+	TEnumAsByte<EDeathPose> DeathPose;
 	UPROPERTY(BlueprintReadOnly)
 	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
+
 
 
 

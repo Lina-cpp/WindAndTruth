@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h" //for weapon box
 #include "Components/AttributeComponent.h" //Components with Attributes hp, etc.
 #include "Kismet/GameplayStatics.h" //SFX & VFX
+#include "Components/CapsuleComponent.h" //Turn Off capsule collision
 
 
 ABaseCharacter::ABaseCharacter()
@@ -94,8 +95,40 @@ void ABaseCharacter::SpawnHitParticle(const FVector& ImpactPoint)
 **/
 
 
-void ABaseCharacter::PlayAttackMontage()
+void ABaseCharacter::PlayMontageSection(UAnimMontage* Montage, const FName& SectionName)
 {
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance(); //Get Mesh's AnimInstance
+	if (AnimInstance && Montage)	//check if instance and Montage isn't null
+	{
+		AnimInstance->Montage_Play(Montage); //Play montage
+		AnimInstance->Montage_JumpToSection(SectionName, Montage); //Jump to section of this montage
+	}
+}
+
+int32 ABaseCharacter::PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames)
+{
+	if (SectionNames.Num() <= 0) return -1;
+	const int32 MaxSectionIndex = SectionNames.Num() - 1; //get how many sections there is
+	const int32 Selection = FMath::RandRange(0, MaxSectionIndex); // get random number
+	PlayMontageSection(Montage, SectionNames[Selection]);
+	
+	return Selection;
+}
+
+
+int32 ABaseCharacter::PlayAttackMontage()
+{
+	return PlayRandomMontageSection(AttackMontage, AttackMontageSections);
+}
+
+int32 ABaseCharacter::PlayDeathMontage()
+{
+	return PlayRandomMontageSection(DeathMontage, DeathMontageSections);
+}
+
+void ABaseCharacter::DisableCapsule()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
 }
 
 void ABaseCharacter::PlayHitReactMontage(const FName SectionName)

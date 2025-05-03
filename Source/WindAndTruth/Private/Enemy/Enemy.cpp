@@ -5,9 +5,9 @@
 #include "AIController.h"
 #include "Characters/PlayerCharacterBase.h"
 
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/AttributeComponent.h"
 #include "Items/Weapons/Weapon.h"
 
@@ -249,8 +249,6 @@ void AEnemy::HandleDamage(float DamageAmount)
 }
 
 
-
-
 void AEnemy::CheckCombatTarget()
 {
 	if (IsOutsideCombatRadius()) /*	Check if Enemy is in Combat Radius, if not - stop following and hide Healthbar	*/
@@ -290,55 +288,29 @@ void AEnemy::Destroyed()
  * Montages
 */
 
+
+int32 AEnemy::PlayDeathMontage()
+{
+	const int32 Selection = Super::PlayDeathMontage();
+	TEnumAsByte<EDeathPose> Pose(Selection); //Sets Pose to a enum value depending on Selection - so If Selection == 1 -> Pose == Second index of EDeathPose
+	if (Pose < EDeathPose::EDP_MAX)
+	{
+		DeathPose = Pose;
+	}
+	return Selection;
+}
+
+
 void AEnemy::Die()
 {
+	EnemyState = EEnemyState::EES_Dead; //set enemy to dead (prevents playing hit animation)
+	PlayDeathMontage();
+	ClearAttackTimer();
+	HideHealthBar();
+	DisableCapsule();
+	SetLifeSpan(DeathLifeSpan); //Destroy actor after 5s of being dead
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 	
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && DeathMontage)
-	{
-		AnimInstance->Montage_Play(DeathMontage); //play montage
-
-		//get random anim to play
-		const int32 Selection = FMath::RandRange(0,2); //random number (depends on how many anims I have)
-		FName SectionName = FName(); //Clear FName, to overwrite in switch
-		switch (Selection)
-		{
-		case 0:
-			SectionName = 	FName("Death1");
-			DeathPose = EDeathPose::EDP_Death1;
-			break;
-		case 1:
-			SectionName = 	FName("Death2");
-			DeathPose = EDeathPose::EDP_Death2;
-			break;
-		case 2:
-			SectionName = 	FName("Death3");
-			DeathPose = EDeathPose::EDP_Death3;
-			break;
-		case 3:
-			SectionName = 	FName("Death4");
-			DeathPose = EDeathPose::EDP_Death4;
-			break;
-		case 4:
-			SectionName = 	FName("Death5");
-			DeathPose = EDeathPose::EDP_Death5;
-			break;
-			
-		default:
-			break;
-		}
-		
-		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
-	}
-	
-	if (HealthBarWidget)
-	{
-		HealthBarWidget->SetVisibility(false); //Hide healthBar when enemy Dies
-	}
-
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
-	SetLifeSpan(5.f); //Destroy actor after 5s of being dead
-
 	//Rolling for Weapon Drop and destroying
 	if (EquippedWeapon)
 	{
@@ -355,31 +327,6 @@ void AEnemy::Die()
 
 		
 		EquippedWeapon->SetLifeSpan(5.f);
-	}
-}
-
-void AEnemy::PlayAttackMontage()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && AttackMontage) //check if AnimInstance is valid and if AttackMontage isn't nullptr
-	{
-		//how it works - get random number, then play matching section from AM_Attack
-		AnimInstance->Montage_Play(AttackMontage);
-		const int32 Selection = FMath::RandRange(0,1); //random number (rn 3 because I have 3 attack anims)
-		FName SectionName = FName(); //Clear FName, to overwrite in switch
-		switch (Selection)
-		{
-		case 0:
-			SectionName = 	FName("Attack1");
-			break;
-		case 1:
-			SectionName = 	FName("Attack2");
-			break;
-		default:
-			break;
-		}
-		//Jump to Section in Montage and play
-		AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 	}
 }
 

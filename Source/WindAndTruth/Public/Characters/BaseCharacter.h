@@ -63,10 +63,19 @@ protected:
 /**
 *	Play montage functions
 **/
-	virtual void PlayAttackMontage();
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	TArray<FName> AttackMontageSections; //Array of all Montage Sections
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	TArray<FName> DeathMontageSections;
+
 	void PlayHitReactMontage(const FName SectionName);
 	void DirectionalHitReact(const FVector& ImpactPoint); //Calculate from which side got hit
 
+	void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
+	int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
+	virtual int32 PlayAttackMontage();
+	virtual int32 PlayDeathMontage();
+	void DisableCapsule();
 
 /**
 *	Widgets and Components
@@ -83,3 +92,4 @@ private:
 	UPROPERTY(EditAnywhere, Category = VFX)
 	UParticleSystem* HitParticle;
 };
+
