@@ -33,6 +33,7 @@ protected:
 *	Combat
 */
 	virtual void Attack() override;
+	virtual void AttackEnd() override;
 	
 	void CheckPatrolTarget();
 	void CheckCombatTarget();
@@ -108,7 +109,7 @@ private:
 	UPROPERTY()
 	AActor* CombatTarget;
 	UPROPERTY(EditAnywhere)
-	double CombatRadius = 500.f;
+	double CombatRadius = 1000.f;
 	UPROPERTY(EditAnywhere)
 	double AttackRadius = 150.f;
 

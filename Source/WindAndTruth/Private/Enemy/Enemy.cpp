@@ -206,7 +206,15 @@ bool AEnemy::InTargetRange(AActor* Target, double Radius)
 
 void AEnemy::Attack()
 {
+	EnemyState = EEnemyState::EES_Engaged;
 	PlayAttackMontage();
+}
+
+void AEnemy::AttackEnd()
+{
+	EnemyState = EEnemyState::EES_NoState;
+	CheckCombatTarget(); //check what to do next
+	
 }
 
 
@@ -398,7 +406,8 @@ bool AEnemy::CanAttack()
 	bool bCanAttack =
 		IsInsideAttackRadius() &&
 		!IsAttacking() &&
-		!IsDead();
+		!IsDead() &&
+		!IsEngaged();
 
 	return bCanAttack;
 }
