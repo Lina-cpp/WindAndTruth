@@ -5,6 +5,7 @@
 #include "Items/Weapons/Weapon.h" //weapon
 #include "Components/BoxComponent.h" //for weapon box
 #include "Components/AttributeComponent.h" //Components with Attributes hp, etc.
+#include "Kismet/GameplayStatics.h" //SFX & VFX
 
 
 ABaseCharacter::ABaseCharacter()
@@ -51,6 +52,11 @@ void ABaseCharacter::Attack()
 	
 }
 
+bool ABaseCharacter::IsAlive()
+{
+	return Attributes && Attributes->IsAlive();
+}
+
 void ABaseCharacter::AttackEnd()
 {
 	
@@ -61,10 +67,32 @@ void ABaseCharacter::Die()
 	
 }
 
+void ABaseCharacter::HandleDamage(float DamageAmount)
+{
+	if (Attributes)
+	{
+		Attributes->ReceiveDamage(DamageAmount); //Calculate damage based on input dmg and hp
+	}
+}
+
+/**
+*	SFX & VFX
+**/
+
+void ABaseCharacter::PlayHitSound(const FVector& ImpactPoint)
+{
+	if (HitSound) UGameplayStatics::PlaySoundAtLocation(this, HitSound,ImpactPoint); //if valid, play sound at location
+}
+
+void ABaseCharacter::SpawnHitParticle(const FVector& ImpactPoint)
+{
+	if (HitParticle) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, ImpactPoint);
+}
 
 /**
 *	Play montage functions
 **/
+
 
 void ABaseCharacter::PlayAttackMontage()
 {

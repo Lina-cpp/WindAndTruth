@@ -21,7 +21,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override; //PlayerInputs
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override; //override interface function
 	//TakeDamage override (Actor virtual function)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
@@ -38,8 +37,10 @@ protected:
 	void CheckPatrolTarget();
 	void CheckCombatTarget();
 
-		
+	virtual bool CanAttack() override;
 	virtual void Die() override;
+
+	virtual void HandleDamage(float DamageAmount) override;
 
 /** 
 *	Navigation
@@ -87,6 +88,8 @@ private:
 	void LoseInterest();
 	void StartPatrolling();
 	void ChaseTarget();
+
+	void ClearPatrolTimer();
 	
 	bool IsOutsideCombatRadius();
 	bool IsOutsideAttackRadius();
@@ -94,6 +97,10 @@ private:
 
 	bool IsChasing();
 	bool IsAttacking();
+	bool IsDead();
+	bool IsEngaged();
+
+	
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float PatrolingSpeed = 125.f;
@@ -111,6 +118,8 @@ private:
 	double AttackRadius = 150.f;
 
 	void StartAttackTimer();
+	void ClearAttackTimer();
+	
 	FTimerHandle AttackTimer;
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float AttackMin = 0.5f;

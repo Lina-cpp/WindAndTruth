@@ -32,9 +32,12 @@ protected:
 */
 	virtual bool CanAttack();
 	virtual void Attack();
+	bool IsAlive();
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEnd();
 	virtual void Die();
+
+	virtual void HandleDamage(float DamageAmount);
 	
 	//Pointer to weapon char ic currently using
 	UPROPERTY(VisibleAnywhere, Category = Weapon) 
@@ -50,6 +53,12 @@ protected:
 	UAnimMontage* HitReactMontage;
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* DeathMontage;
+
+/*
+* SFX & VFX
+*/
+	void PlayHitSound(const FVector& ImpactPoint);
+	void SpawnHitParticle(const FVector& ImpactPoint);
 	
 /**
 *	Play montage functions
@@ -68,6 +77,7 @@ protected:
 /*
 * SFX & VFX
 */
+private:
 	UPROPERTY(EditDefaultsOnly, Category = Sounds)
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, Category = VFX)
