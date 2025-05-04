@@ -26,15 +26,14 @@ class WINDANDTRUTH_API APlayerCharacterBase : public ABaseCharacter
 
 public:
 	APlayerCharacterBase();
-	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	virtual void BeginPlay() override;
 
-/**
-*	InputMappings and it's functions
-**/
+
+	/*	InputMappings and it's functions	*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputMappingContext* PlayerContextMapping;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -57,20 +56,19 @@ protected:
 
 
 	
-/**
-*	Play montage functions
-**/
+
+/*	Play montage functions	*/
+
 	virtual void AttackEnd() override;
 	void PlayEquipMontage(const FName SectionName);
-
 	
-/**
-*	Weapon Functions
-**/
+/*	Weapon Functions	*/
 	
 	virtual bool CanAttack() override;
 	bool CanDisarm();
 	bool CanArm();
+	void Disarm();
+	void Arm();
 	virtual void Attack() override;
 	
 
@@ -78,10 +76,11 @@ protected:
 /**
 *	Weapon Anim Notifies
 **/
+	void EquipWeapon(AWeapon* Weapon);
 	UFUNCTION(BlueprintCallable)
-	void Disarm(); // Attaches weapon to the back
+	void AttachWeaponToBack(); // Attaches weapon to the back
 	UFUNCTION(BlueprintCallable)
-	void ArmWeapon();
+	void AttachWeaponToHand();
 
 	//UFUNCTION(BlueprintCallable) //in case if I'd like to force stop character while equiping weapon
 	//void FinishEquipping();

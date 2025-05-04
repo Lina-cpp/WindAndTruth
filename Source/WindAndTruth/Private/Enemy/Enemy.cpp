@@ -5,22 +5,15 @@
 #include "AIController.h"
 #include "Characters/PlayerCharacterBase.h"
 
-#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/AttributeComponent.h"
+#include "HUD/HealthBarComponent.h"
 #include "Items/Weapons/Weapon.h"
 
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-
-#include "HUD/HealthBarComponent.h"
-#include "Runtime/AIModule/Classes/AIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
-#include "WindAndTruth/DebugMacros.h"
 
 
 AEnemy::AEnemy()
@@ -32,7 +25,6 @@ AEnemy::AEnemy()
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore); //ignore camera so there will not be any glitchy zooms
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
 	//widgets and components
 	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>("Health Bar");
@@ -50,11 +42,8 @@ AEnemy::AEnemy()
 		PawnSensing->SetPeripheralVisionAngle(45.f);
 }
 
-void AEnemy::BeginPlay()
+void AEnemy::SpawnDefaultWeapon()
 {
-	Super::BeginPlay();
-
-	/*	Spawning Weapon and Attaching to Character	*/
 	UWorld* World = GetWorld();
 	if (World && WeaponClass)
 	{
@@ -62,27 +51,16 @@ void AEnemy::BeginPlay()
 		DefaultWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this); //equip weapon (aatach to socket)
 		EquippedWeapon = DefaultWeapon;
 	}
+}
+
+void AEnemy::BeginPlay()
+{
+	Super::BeginPlay();
 
 	/*	Declaring Delegate for OnSeePawn	*/
-	if (PawnSensing)
-	{
-		PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
-	}
+	if (PawnSensing) PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
+	InitializeEnemy();
 
-	
-	/*	Check HP and set bar correctly	*/
-	if (Attributes && HealthBarWidget)
-	{
-		HealthBarWidget->SetVisibility(false);// Hide HealthBar from Screen
-		//Good way to prevent optimization problems, should be creating HP widget on hit, and calculate hp
-		//In case of a lot of npc on map this can turn into Dragons Dogma 2 problem
-		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //calculate hp % to display properly
-	}
-
-	
-	/*	Get Enemy Controller & Move to Patrol target at BeginPlay	*/
-	EnemyController = Cast<AAIController>(GetController()); //cast to AI controller with get controller
-	MoveToTarget(PatrolTarget); //Call function to Move Enemy
 }
 
 
@@ -92,6 +70,7 @@ void AEnemy::Tick(float DeltaTime)
 
 
 	if (IsDead()) return;	//if enemy is already dead, don't do any checks
+	
 	if (EnemyState > EEnemyState::EES_Patrolling)
 	{
 		CheckCombatTarget();		
@@ -179,23 +158,6 @@ void AEnemy::CheckPatrolTarget()
 }
 
 
-/*
-*	Bool Functions
-*/
-
-
-bool AEnemy::InTargetRange(AActor* Target, double Radius)
-{
-	if (Target == nullptr) return false;
-	//Distance between Enemy and Player
-	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
-
-	//Debug
-	DRAW_SPHERE_SingleFrame(GetActorLocation())
-	DRAW_SPHERE_SingleFrame(Target->GetActorLocation())
-	
-	return DistanceToTarget <= Radius;
-}
 
 
 
@@ -349,10 +311,18 @@ void AEnemy::ShowHealthBar()
 	}
 }
 
-
 /*
-*	Bool Funcions - Check Radius
+*	Bool Functions
 */
+
+bool AEnemy::InTargetRange(AActor* Target, double Radius)
+{
+	if (Target == nullptr) return false;
+	//Distance between Enemy and Player
+	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+	
+	return DistanceToTarget <= Radius;
+}
 
 bool AEnemy::IsOutsideCombatRadius()
 {
@@ -405,6 +375,23 @@ bool AEnemy::CanAttack()
 /*
 *	Enemy Behavior
 */
+
+
+void AEnemy::InitializeEnemy()
+{
+	EnemyController = Cast<AAIController>(GetController()); //cast to AI controller with get controller
+	SpawnDefaultWeapon(); /*	Spawning Weapon and Attaching to Character	*/
+	MoveToTarget(PatrolTarget);
+	
+	/*	Check HP and set bar correctly	*/
+	if (Attributes && HealthBarWidget)
+	{
+		HideHealthBar(); // Hide HealthBar from Screen
+		//Good way to prevent optimization problems, should be creating HP widget on hit, and calculate hp
+		//In case of a lot of npc on map this can turn into Dragons Dogma 2 problem
+		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent()); //calculate hp % to display properly
+	}
+}
 
 
 void AEnemy::LoseInterest()

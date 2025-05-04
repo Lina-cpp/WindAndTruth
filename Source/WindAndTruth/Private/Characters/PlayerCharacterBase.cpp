@@ -12,12 +12,11 @@
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
 #include "GroomComponent.h"
-#include "Components/BoxComponent.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	//roation off so character won't be 'glued' to the screen and rotate with camera
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -59,17 +58,6 @@ void APlayerCharacterBase::BeginPlay()
 	Tags.Add(FName("Player")); //Tag - First use in Enemy.cpp to check is SeenPawn is Player
 	
 }
-
-void APlayerCharacterBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-
-
-
-
 
 
 
@@ -128,10 +116,7 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon)
 	{
-		OverlappingWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
-		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-		OverlappingItem = nullptr;
-		EquippedWeapon = OverlappingWeapon;
+		EquipWeapon(OverlappingWeapon);
 	}
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));
 }
@@ -150,20 +135,25 @@ void APlayerCharacterBase::EquipWeaponFromBack(const FInputActionValue& Value)
 {
 	if (CanDisarm())
 	{
-		PlayEquipMontage(FName("Unequip"));
-		CharacterState = ECharacterState::ECS_Unequipped;
-		//ActionState = EActionState::EAS_EquippingWeapon;
+		Disarm();
 	}
 	else if (CanArm())
 	{
-		PlayEquipMontage(FName("Equip"));
-		CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
-		//ActionState = EActionState::EAS_EquippingWeapon;
+		Arm();
 	}
 	
 }
 
-void APlayerCharacterBase::Disarm()
+void APlayerCharacterBase::EquipWeapon(AWeapon* Weapon)
+{
+	Weapon->Equip(GetMesh(), FName("RightHandSocket"), this, this);
+	CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	OverlappingItem = nullptr;
+	EquippedWeapon = Weapon;
+}
+
+
+void APlayerCharacterBase::AttachWeaponToBack()
 {
 	if (EquippedWeapon)
 	{
@@ -172,7 +162,7 @@ void APlayerCharacterBase::Disarm()
 	}
 }
 
-void APlayerCharacterBase::ArmWeapon()
+void APlayerCharacterBase::AttachWeaponToHand()
 {
 	if (EquippedWeapon)
 	{
@@ -244,6 +234,20 @@ bool APlayerCharacterBase::CanArm()
 	return ActionState == EActionState::EAS_Unoccupied &&
 	CharacterState == ECharacterState::ECS_Unequipped &&
 	EquippedWeapon;
+}
+
+void APlayerCharacterBase::Disarm()
+{
+	PlayEquipMontage(FName("Unequip"));
+	CharacterState = ECharacterState::ECS_Unequipped;
+	//ActionState = EActionState::EAS_EquippingWeapon;
+}
+
+void APlayerCharacterBase::Arm()
+{
+	PlayEquipMontage(FName("Equip"));
+	CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+	//ActionState = EActionState::EAS_EquippingWeapon;
 }
 
 

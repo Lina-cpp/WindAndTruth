@@ -21,8 +21,6 @@ public:
 	ABaseCharacter();
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -30,11 +28,14 @@ protected:
 /*
 *	Combat & Weapons
 */
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
+	
 	virtual bool CanAttack();
 	virtual void Attack();
-	bool IsAlive();
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEnd();
+	bool IsAlive();
 	virtual void Die();
 
 	virtual void HandleDamage(float DamageAmount);
@@ -44,29 +45,12 @@ protected:
 	AWeapon* EquippedWeapon;
 
 	
-/**
-* Animation Montages
-**/
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* AttackMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* HitReactMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* DeathMontage;
 
 /*
 * SFX & VFX
 */
 	void PlayHitSound(const FVector& ImpactPoint);
 	void SpawnHitParticle(const FVector& ImpactPoint);
-	
-/**
-*	Play montage functions
-**/
-	UPROPERTY(EditDefaultsOnly, Category = Combat)
-	TArray<FName> AttackMontageSections; //Array of all Montage Sections
-	UPROPERTY(EditDefaultsOnly, Category = Combat)
-	TArray<FName> DeathMontageSections;
 
 	void PlayHitReactMontage(const FName SectionName);
 	void DirectionalHitReact(const FVector& ImpactPoint); //Calculate from which side got hit
@@ -91,5 +75,19 @@ private:
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, Category = VFX)
 	UParticleSystem* HitParticle;
+
+/**
+* Animation Montages
+**/
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* AttackMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* HitReactMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* DeathMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	TArray<FName> AttackMontageSections; //Array of all Montage Sections
+	UPROPERTY(EditDefaultsOnly, Category = Combat)
+	TArray<FName> DeathMontageSections;
 };
 

@@ -54,6 +54,9 @@ protected:
 private:
 	/*	AI Behavior	*/
 
+	void InitializeEnemy();
+	void SpawnDefaultWeapon();
+
 	AActor* ChoosePatrolTarget();
 	
 	UFUNCTION()
