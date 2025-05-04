@@ -18,7 +18,10 @@ public:
 	
 	void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
 	void AttachMeshToSocket(USceneComponent* InParent, FName InSocketName);
-	
+	void DisableSphereCollision();
+	void DeactivatePickupEffect();
+	void PlayEquipSound();
+
 	TArray<AActor*> IgnoreActors; //Array of actors for weapon to ignore. Used to prevent multiple hits from one swing
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = 0, ClampMax = 1))
@@ -27,10 +30,6 @@ public:
 protected:
 	void BeginPlay() override;
 	
-	//override of parent functions
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
-
 	UFUNCTION() //WeaponBox Overlap
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
@@ -51,6 +50,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	float WeaponDamage = 20;
 
+	void BoxTrace(FHitResult& BoxHit);
+	void ExecuteGetHit(FHitResult BoxHit);
+	bool ActorIsSameType(AActor* OtherActor);
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	FVector BoxTraceExtent = FVector(5.f);
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	bool bShowBoxDebug = false;
+	
 /*
 *	Setters & Getters
 */

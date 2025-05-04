@@ -71,9 +71,9 @@ protected:
 * SFX & VFX
 */
 private:
-	UPROPERTY(EditDefaultsOnly, Category = Sounds)
+	UPROPERTY(EditDefaultsOnly, Category = "Effects | SFX")
 	USoundBase* HitSound;
-	UPROPERTY(EditAnywhere, Category = VFX)
+	UPROPERTY(EditAnywhere, Category = "Effects | VFX")
 	UParticleSystem* HitParticle;
 
 /**

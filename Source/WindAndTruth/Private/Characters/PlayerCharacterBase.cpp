@@ -12,6 +12,8 @@
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
 #include "GroomComponent.h"
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -24,6 +26,12 @@ APlayerCharacterBase::APlayerCharacterBase()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; //Character will turn to directions he is moving
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f); //Rotation speed
+
+	GetMesh()->SetCollisionObjectType(ECC_WorldDynamic);
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 	
 	//Spring arm and Camera
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
@@ -55,8 +63,14 @@ void APlayerCharacterBase::BeginPlay()
 		}
 	}
 
-	Tags.Add(FName("Player")); //Tag - First use in Enemy.cpp to check is SeenPawn is Player
+	Tags.Add(FName("EngageableTarget")); //Tag - First use in Enemy.cpp to check is SeenPawn is Player
 	
+}
+
+void APlayerCharacterBase::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	PlayHitSound(ImpactPoint);
+	SpawnHitParticle(ImpactPoint);
 }
 
 

@@ -36,27 +36,11 @@ void AWeapon::BeginPlay()
 
 
 
-
-/**
- * Overlap Functions
-**/
-void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AWeapon::BoxTrace(FHitResult& BoxHit)
 {
-	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
-}
-
-
-void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	const FVector Start = BoxTraceStart->GetComponentLocation(); //Get StartComponent World Location and save it
-	const FVector End = BoxTraceEnd->GetComponentLocation(); //Get EndComponent World Location and save it
+	/*	Start&End locations for trace	*/
+	const FVector Start = BoxTraceStart->GetComponentLocation();
+	const FVector End = BoxTraceEnd->GetComponentLocation();
 	
 	TArray<AActor*> ActorsToIgnore;	//Array of actors to ignore
 	ActorsToIgnore.Add(this); //Add this to array, so weapon will ignore itself
@@ -66,21 +50,50 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		ActorsToIgnore.AddUnique(Actor);
 	}
 	
-	FHitResult BoxHit; //Out parameter, will be filled with info
 	UKismetSystemLibrary::BoxTraceSingle(this,
 		Start, End,
-		FVector(5.f, 5.f, 5.f),
+		BoxTraceExtent,
 		BoxTraceStart->GetComponentRotation(),
 		ETraceTypeQuery::TraceTypeQuery1,
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::None,
+		bShowBoxDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None,
 		BoxHit,
 		true
 		);
+	IgnoreActors.AddUnique(BoxHit.GetActor()); //Add Actor that got hit to Ignore, so we don't get multiple hits by one swing
+}
+
+
+void AWeapon::ExecuteGetHit(FHitResult BoxHit)
+{
+	//check if actor we hit has interface
+	IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
+	if (HitInterface) //check if cast is not failed
+	{
+		HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint); //since interface is native, call this to get it in cpp&bp
+	}
+}
+
+bool AWeapon::ActorIsSameType(AActor* OtherActor)
+{
+	return GetOwner()->ActorHasTag(TEXT("Enemy")) && OtherActor->ActorHasTag(TEXT("Enemy"));
+}
+
+void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                           int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ActorIsSameType(OtherActor)) return;
+
+	
+	FHitResult BoxHit;
+	BoxTrace(BoxHit);
+	
 	//check if actor that got hit is valid
 	if (BoxHit.GetActor())
 	{
+		if (ActorIsSameType(BoxHit.GetActor())) return;
+		
 		UGameplayStatics::ApplyDamage(
 			BoxHit.GetActor(), //actor that got hit
 			WeaponDamage,//Weapons Damage to deal
@@ -89,21 +102,10 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 			UDamageType::StaticClass() //Damage type class
 			);
 		
-		//check if actor we hit has interface
-		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
-		if (HitInterface) //check if cast is not failed
-		{
-			HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint); //since interface is native, call this to get it in cpp&bp
-		}
-		
-		IgnoreActors.AddUnique(BoxHit.GetActor()); //Add Actor that got hit to Ignore, so we don't get multiple hits by one swing
+		ExecuteGetHit(BoxHit);
 		CreateFields(BoxHit.ImpactPoint);
-
-
 	}
 }
-
-
 
 
 /*
@@ -117,28 +119,43 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, FName InSocketName)
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
 }
 
+
 void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator)
 {
+	//Enum for how to Attach to target
+	ItemState = EItemState::EIS_Equipped;
 	SetOwner(NewOwner);
 	SetInstigator(NewInstigator);
-
-	
-	//Enum for how to Attach to target
 	AttachMeshToSocket(InParent, InSocketName);
-	ItemState = EItemState::EIS_Equipped;
+	DisableSphereCollision();
+	PlayEquipSound();
+	DeactivatePickupEffect();
+}
+
+
+void AWeapon::PlayEquipSound()
+{
 	if (EquipSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
 			this,
 			EquipSound,
 			GetActorLocation()
-			);
+		);
 	}
+}
+
+void AWeapon::DisableSphereCollision()
+{
 	if (Sphere)
 	{
 		//When we pick up weapon, turn off sphere collision, so it won't call overlap events on attacks
 		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+}
+
+void AWeapon::DeactivatePickupEffect()
+{
 	if (PickupEffect)
 	{
 		PickupEffect->Deactivate(); //Deactivate on weapon equip

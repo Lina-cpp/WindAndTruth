@@ -60,6 +60,7 @@ void AEnemy::BeginPlay()
 	/*	Declaring Delegate for OnSeePawn	*/
 	if (PawnSensing) PawnSensing->OnSeePawn.AddDynamic(this, &AEnemy::PawnSeen);
 	InitializeEnemy();
+	Tags.Add(FName("Enemy"));
 
 }
 
@@ -100,7 +101,7 @@ void AEnemy::PawnSeen(APawn* SeenPawn)
 		EnemyState != EEnemyState::EES_Dead &&
 		EnemyState != EEnemyState::EES_Chasing &&
 		EnemyState < EEnemyState::EES_Chasing &&
-		SeenPawn->ActorHasTag(FName("Player"));
+		SeenPawn->ActorHasTag(FName("EngageableTarget"));
 
 	if (bShouldChaseTarget)
 	{
