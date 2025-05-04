@@ -91,6 +91,12 @@ void ABaseCharacter::SpawnHitParticle(const FVector& ImpactPoint)
 	if (HitParticle) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, ImpactPoint);
 }
 
+
+void ABaseCharacter::PlayDeathSound(const FVector& ImpactPoint)
+{
+	if (DeathSound) UGameplayStatics::PlaySoundAtLocation(this, DeathSound,ImpactPoint);
+}
+
 /**
 *	Play montage functions
 **/

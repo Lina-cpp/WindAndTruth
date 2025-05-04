@@ -51,6 +51,7 @@ protected:
 */
 	void PlayHitSound(const FVector& ImpactPoint);
 	void SpawnHitParticle(const FVector& ImpactPoint);
+	void PlayDeathSound(const FVector& ImpactPoint);
 
 	void PlayHitReactMontage(const FName SectionName);
 	void DirectionalHitReact(const FVector& ImpactPoint); //Calculate from which side got hit
@@ -75,6 +76,8 @@ private:
 	USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, Category = "Effects | VFX")
 	UParticleSystem* HitParticle;
+	UPROPERTY(EditDefaultsOnly, Category = "Effects | SFX")
+	USoundBase* DeathSound;
 
 /**
 * Animation Montages
@@ -90,4 +93,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	TArray<FName> DeathMontageSections;
 };
+
 

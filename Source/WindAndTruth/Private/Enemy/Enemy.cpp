@@ -270,6 +270,7 @@ void AEnemy::Die()
 	DisableCapsule();
 	SetLifeSpan(DeathLifeSpan); //Destroy actor after 5s of being dead
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	PlayDeathSound(GetActorLocation());
 	
 	//Rolling for Weapon Drop and destroying
 	if (EquippedWeapon)
