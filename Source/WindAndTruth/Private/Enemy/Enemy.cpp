@@ -280,17 +280,6 @@ void AEnemy::CheckCombatTarget()
 }
 
 
-/*
-void AEnemy::Destroyed()
-{
-	if (EquippedWeapon)
-	{
-		EquippedWeapon->Destroy();
-	}
-
-}
-*/
-
 
 /*
  * Montages
