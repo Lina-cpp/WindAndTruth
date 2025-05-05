@@ -70,6 +70,7 @@ void APlayerCharacterBase::BeginPlay()
 void APlayerCharacterBase::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	Super::GetHit_Implementation(ImpactPoint);
+	ActionState = EActionState::EAS_HitReaction;
 }
 
 
@@ -181,6 +182,11 @@ void APlayerCharacterBase::AttachWeaponToHand()
 	{
 		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
 	}
+}
+
+void APlayerCharacterBase::HitReactEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
 void APlayerCharacterBase::Attack()

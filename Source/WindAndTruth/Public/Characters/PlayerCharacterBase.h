@@ -82,6 +82,8 @@ protected:
 	void AttachWeaponToBack(); // Attaches weapon to the back
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToHand();
+	UFUNCTION(BlueprintCallable)
+	void HitReactEnd();
 
 	//UFUNCTION(BlueprintCallable) //in case if I'd like to force stop character while equiping weapon
 	//void FinishEquipping();

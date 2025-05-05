@@ -185,7 +185,8 @@ void AEnemy::AttackEnd()
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	Super::GetHit_Implementation(ImpactPoint);
-	ShowHealthBar();
+	if (!IsDead()) ShowHealthBar();
+	ClearPatrolTimer();
 }
 
 float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -260,6 +261,7 @@ void AEnemy::Die()
 	SetLifeSpan(DeathLifeSpan); //Destroy actor after 5s of being dead
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	PlayDeathSound(GetActorLocation());
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	//Rolling for Weapon Drop and destroying
 	if (EquippedWeapon)
