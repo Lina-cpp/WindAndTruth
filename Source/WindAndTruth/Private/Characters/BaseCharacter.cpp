@@ -24,6 +24,20 @@ void ABaseCharacter::BeginPlay()
 	
 }
 
+void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	//After applying dmg, check is Character Alive and decide what anim to play
+	if (IsAlive())
+	{
+		DirectionalHitReact(ImpactPoint);
+	}
+	else Die();
+
+	/*	VFX & SFX	*/
+	PlayHitSound(ImpactPoint);
+	SpawnHitParticle(ImpactPoint);
+}
+
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

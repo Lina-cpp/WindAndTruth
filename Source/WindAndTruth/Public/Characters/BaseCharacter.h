@@ -28,6 +28,7 @@ protected:
 /*
 *	Combat & Weapons
 */
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 	

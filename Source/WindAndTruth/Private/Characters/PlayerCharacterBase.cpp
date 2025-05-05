@@ -69,8 +69,7 @@ void APlayerCharacterBase::BeginPlay()
 
 void APlayerCharacterBase::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	PlayHitSound(ImpactPoint);
-	SpawnHitParticle(ImpactPoint);
+	Super::GetHit_Implementation(ImpactPoint);
 }
 
 

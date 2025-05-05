@@ -184,20 +184,8 @@ void AEnemy::AttackEnd()
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	/*	HealthBar	*/
-	if (HealthBarWidget) ShowHealthBar(); //show healthbar when enemy got hit
-
-	
-	//After applying dmg, check is Character Alive and decide what anim to play
-	if (IsAlive())
-	{
-		DirectionalHitReact(ImpactPoint);
-	}
-	else Die();
-
-	/*	VFX & SFX	*/
-	PlayHitSound(ImpactPoint);
-	SpawnHitParticle(ImpactPoint);
+	Super::GetHit_Implementation(ImpactPoint);
+	ShowHealthBar();
 }
 
 float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
