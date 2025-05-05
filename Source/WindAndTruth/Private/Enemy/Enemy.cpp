@@ -42,17 +42,6 @@ AEnemy::AEnemy()
 		PawnSensing->SetPeripheralVisionAngle(45.f);
 }
 
-void AEnemy::SpawnDefaultWeapon()
-{
-	UWorld* World = GetWorld();
-	if (World && WeaponClass)
-	{
-		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass); //spawn Weapon on BeginPlay
-		DefaultWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this); //equip weapon (aatach to socket)
-		EquippedWeapon = DefaultWeapon;
-	}
-}
-
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -80,9 +69,21 @@ void AEnemy::Tick(float DeltaTime)
 	{
 		CheckPatrolTarget();	
 	}
-	
 
 }
+
+
+void AEnemy::SpawnDefaultWeapon()
+{
+	UWorld* World = GetWorld();
+	if (World && WeaponClass)
+	{
+		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass); //spawn Weapon on BeginPlay
+		DefaultWeapon->Equip(GetMesh(), FName("RightHandSocket"), this, this); //equip weapon (aatach to socket)
+		EquippedWeapon = DefaultWeapon;
+	}
+}
+
 
 
 /**
