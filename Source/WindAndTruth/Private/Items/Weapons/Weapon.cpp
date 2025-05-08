@@ -44,6 +44,7 @@ void AWeapon::BoxTrace(FHitResult& BoxHit)
 	
 	TArray<AActor*> ActorsToIgnore;	//Array of actors to ignore
 	ActorsToIgnore.Add(this); //Add this to array, so weapon will ignore itself
+	ActorsToIgnore.Add(GetOwner());
 
 	for (AActor* Actor : IgnoreActors) //loop will be executed once for each actor
 	{
@@ -71,7 +72,7 @@ void AWeapon::ExecuteGetHit(FHitResult BoxHit)
 	IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
 	if (HitInterface) //check if cast is not failed
 	{
-		HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint); //since interface is native, call this to get it in cpp&bp
+		HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint, GetOwner()); //since interface is native, call this to get it in cpp&bp
 	}
 }
 

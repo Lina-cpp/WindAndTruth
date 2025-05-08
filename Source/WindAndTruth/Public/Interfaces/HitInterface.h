@@ -23,5 +23,5 @@ class WINDANDTRUTH_API IHitInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintNativeEvent) //NativeEvent so it can be programmed in cpp and bp
-	void GetHit(const FVector& ImpactPoint); //pure function - can not be implemented in the class it which was declared 
+	void GetHit(const FVector& ImpactPoint, AActor* Hitter); //pure function - can not be implemented in the class it which was declared 
 };

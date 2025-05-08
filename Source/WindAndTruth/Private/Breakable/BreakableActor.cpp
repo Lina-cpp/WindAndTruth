@@ -41,7 +41,7 @@ void ABreakableActor::Tick(float DeltaTime)
 
 }
 
-void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
+void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
 	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 5.f, FColor::Red, TEXT("CPP GetHit"));		
 }
