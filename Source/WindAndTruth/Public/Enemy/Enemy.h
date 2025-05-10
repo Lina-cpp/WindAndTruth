@@ -29,7 +29,9 @@ public:
 protected:
 	/*	<AActor>	*/
 	virtual void BeginPlay() override;
-	
+		
+	UPROPERTY(BlueprintReadOnly, Category = Combat)
+	AActor* CombatTarget;
 
 	/*	Combat */
 	virtual void Attack() override;
@@ -97,9 +99,6 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	UPawnSensingComponent* PawnSensing;
-	
-	UPROPERTY()
-	AActor* CombatTarget;
 	
 	UPROPERTY(EditAnywhere)
 	double CombatRadius = 1000.f;

@@ -62,7 +62,8 @@ protected:
 	virtual int32 PlayAttackMontage();
 	virtual int32 PlayDeathMontage();
 	void DisableCapsule();
-
+	
+	void StopAttackMontage();
 /**
 *	Widgets and Components
 **/
@@ -93,6 +94,7 @@ private:
 	TArray<FName> AttackMontageSections; //Array of all Montage Sections
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	TArray<FName> DeathMontageSections;
+
 };
 
 

@@ -187,6 +187,9 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 	if (!IsDead()) ShowHealthBar();
 	ClearPatrolTimer();
+	ClearAttackTimer();
+	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
+	StopAttackMontage();
 }
 
 float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -194,7 +197,15 @@ float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEv
 {
 	HandleDamage(DamageAmount);
 	CombatTarget = EventInstigator->GetPawn(); //Store dmg causer (player) to combat target
-	ChaseTarget();
+	if (IsInsideAttackRadius())
+	{
+		EnemyState = EEnemyState::EES_Attacking;
+	}
+	else if (IsOutsideAttackRadius())
+	{
+		ChaseTarget();
+	}
+
 	return DamageAmount;
 }
 

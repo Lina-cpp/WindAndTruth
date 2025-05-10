@@ -152,6 +152,15 @@ void ABaseCharacter::DisableCapsule()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
 }
 
+void ABaseCharacter::StopAttackMontage()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		AnimInstance->Montage_Stop(0.25f, AttackMontage);
+	}
+}
+
 void ABaseCharacter::PlayHitReactMontage(const FName SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();	//get anim instance
