@@ -30,8 +30,7 @@ protected:
 	/*	<AActor>	*/
 	virtual void BeginPlay() override;
 		
-	UPROPERTY(BlueprintReadOnly, Category = Combat)
-	AActor* CombatTarget;
+
 
 	/*	Combat */
 	virtual void Attack() override;

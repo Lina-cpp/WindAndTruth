@@ -40,11 +40,19 @@ protected:
 	virtual void Die();
 
 	virtual void HandleDamage(float DamageAmount);
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetTranslationWarpTarget();
+	UFUNCTION(BlueprintCallable)
+	FVector GetRotationWarpTarget();
 	
 	//Pointer to weapon char ic currently using
 	UPROPERTY(VisibleAnywhere, Category = Weapon) 
 	AWeapon* EquippedWeapon;
-
+	UPROPERTY(BlueprintReadOnly, Category = Combat)
+	AActor* CombatTarget;
+	UPROPERTY(EditAnywhere, Category = Combat)
+	double WarpTargetDistance = 75.f;
 	
 
 /*
