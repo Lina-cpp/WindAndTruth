@@ -54,6 +54,13 @@ protected:
 		USphereComponent* Sphere;
 	UPROPERTY(EditAnywhere)
 		class UNiagaraComponent* PickupEffect;
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* OnPickupEffect;
+	UPROPERTY(EditAnywhere)
+	USoundBase* PickupSound;
+	
+	virtual void SpawnPickupSystem();
+	virtual void PlayPickupSound();
 	
 	EItemState ItemState = EItemState::EIS_Hovering; //Set Default state
 private:	
