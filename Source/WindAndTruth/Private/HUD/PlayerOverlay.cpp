@@ -36,6 +36,6 @@ void UPlayerOverlay::SetSouls(int32 Souls)
 {
 	if (SoulsCount)
 	{
-		GoldCount->SetText(FText::FromString(FString::Printf(TEXT("%d"), Souls)));
+		SoulsCount->SetText(FText::FromString(FString::Printf(TEXT("%d"), Souls)));
 	}
 }

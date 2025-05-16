@@ -19,6 +19,8 @@ class UGroomComponent;
 class AItem;
 class UAnimMontage;
 class ASoul;
+class ATreasure;
+class UPlayerOverlay;
 
 
 UCLASS()
@@ -33,6 +35,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void SetOverlappingItem(AItem* Item) override;
 	virtual void AddSouls(ASoul* Soul) override;
+	virtual void AddGold(ATreasure* Treasure) override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -111,6 +114,10 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 		AItem* OverlappingItem; //Ref to an item we are overlapping right now
 
+	UPROPERTY()
+	UPlayerOverlay* PlayerOverlay;
+
+	void InitializePlayerOverlay();
 	
 /**
 * ENUMS

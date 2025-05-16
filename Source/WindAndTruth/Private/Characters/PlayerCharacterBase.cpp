@@ -13,7 +13,13 @@
 #include "Animation/AnimMontage.h"
 #include "GroomComponent.h"
 #include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#include "Components/AttributeComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "HUD/PlayerHUD.h"
+#include "Items/Soul.h"
+#include "Items/Treasure.h"
+#include "HUD/PlayerOverlay.h"
+#include "HUD/PlayerHUD.h"
 
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
@@ -64,6 +70,7 @@ void APlayerCharacterBase::BeginPlay()
 	}
 
 	Tags.Add(FName("EngageableTarget")); //Tag - First use in Enemy.cpp to check is SeenPawn is Player
+	InitializePlayerOverlay();
 	
 }
 
@@ -89,7 +96,20 @@ void APlayerCharacterBase::SetOverlappingItem(AItem* Item)
 
 void APlayerCharacterBase::AddSouls(ASoul* Soul)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "PlayerChar: AddSouls");
+	if (Attributes && PlayerOverlay)
+	{
+		Attributes->AddSouls(Soul->GetSouls());
+		PlayerOverlay->SetSouls(Soul->GetSouls());
+	}
+}
+
+void APlayerCharacterBase::AddGold(ATreasure* Treasure)
+{
+	if (Attributes&& PlayerOverlay)
+	{
+		Attributes->AddGold(Treasure->GetGold());
+		PlayerOverlay->SetGold(Attributes->GetGold());
+	}
 }
 
 
@@ -207,6 +227,7 @@ void APlayerCharacterBase::HitReactEnd()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
+
 void APlayerCharacterBase::Attack()
 {
 	if (CanAttack()) //call bool function can attack
@@ -246,6 +267,28 @@ void APlayerCharacterBase::PlayEquipMontage(const FName SectionName)
 		AnimInstance->Montage_JumpToSection(SectionName, EquipMontage);
 	}
 	
+}
+
+/*	Hud Stuff	*/
+
+void APlayerCharacterBase::InitializePlayerOverlay()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerHUD* PlayerHUD = Cast<APlayerHUD>(PlayerController->GetHUD());
+		if (PlayerHUD)
+		{
+			PlayerOverlay = PlayerHUD->GetPlayerOverlay();
+			if (PlayerOverlay && Attributes)
+			{
+				PlayerOverlay->SetHealthBarPercent(Attributes->GetHealthPercent());
+				PlayerOverlay->SetStaminaBarPercent(1.f);
+				PlayerOverlay->SetGold(0);
+				PlayerOverlay->SetSouls(0);
+			}
+		}
+	}
 }
 
 
