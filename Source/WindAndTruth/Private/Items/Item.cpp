@@ -5,7 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "WindAndTruth/DebugMacros.h"
 #include "Components/SphereComponent.h"
-#include "Characters/PlayerCharacterBase.h"
+#include "Interfaces/PickupInterface.h"
 #include "NiagaraComponent.h"
 
 
@@ -64,20 +64,19 @@ float AItem::TransformedCosin()
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	APlayerCharacterBase* PlayerCharacterBase = Cast<APlayerCharacterBase>(OtherActor); //On Overlap cast to PlayerCharacter
-	if (PlayerCharacterBase)
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor); //On Overlap cast to PlayerCharacter
+	if (PickupInterface)
 	{
-		PlayerCharacterBase->SetOverlappingItem(this); //if valid, Get function from PlayerCharacter and call SetOverlapping item with THIS (this weapon)
-		
+		PickupInterface->SetOverlappingItem(this); //if valid, Get function from Interface
 	}
 }
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	APlayerCharacterBase* PlayerCharacterBase = Cast<APlayerCharacterBase>(OtherActor);
-	if (PlayerCharacterBase)
+	IPickupInterface* PickupInterface = Cast<IPickupInterface>(OtherActor); //On Overlap cast Actor with interface
+	if (PickupInterface)
 	{
-		PlayerCharacterBase->SetOverlappingItem(nullptr); // Clear weapon
+		PickupInterface->SetOverlappingItem(nullptr); //Set pointer to null
 	}
 }
 

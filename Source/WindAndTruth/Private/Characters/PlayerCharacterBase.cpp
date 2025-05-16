@@ -82,6 +82,16 @@ float APlayerCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent c
 	return DamageAmount;
 }
 
+void APlayerCharacterBase::SetOverlappingItem(AItem* Item)
+{
+	OverlappingItem = Item;
+}
+
+void APlayerCharacterBase::AddSouls(ASoul* Soul)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "PlayerChar: AddSouls");
+}
+
 
 /**
 * Input Actions & IMC

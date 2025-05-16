@@ -6,6 +6,7 @@
 #include "Pawns/PosesPawns.h"
 #include "CharacterTypes.h"
 #include "BaseCharacter.h"
+#include "Interfaces/PickupInterface.h"
 
 #include "PlayerCharacterBase.generated.h"
 
@@ -17,10 +18,11 @@ class UInputAction;
 class UGroomComponent;
 class AItem;
 class UAnimMontage;
+class ASoul;
 
 
 UCLASS()
-class WINDANDTRUTH_API APlayerCharacterBase : public ABaseCharacter
+class WINDANDTRUTH_API APlayerCharacterBase : public ABaseCharacter, public IPickupInterface
 {
 	GENERATED_BODY()
 
@@ -29,6 +31,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void SetOverlappingItem(AItem* Item) override;
+	virtual void AddSouls(ASoul* Soul) override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -125,7 +129,6 @@ private:
 
 	
 public:
-	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	//public getter for EnumVar so PlayerChar_AnimInstance can get the value
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 
