@@ -24,7 +24,7 @@
 // Sets default values
 APlayerCharacterBase::APlayerCharacterBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	//roation off so character won't be 'glued' to the screen and rotate with camera
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -54,6 +54,16 @@ APlayerCharacterBase::APlayerCharacterBase()
 	Eyebrows = CreateDefaultSubobject<UGroomComponent>("Eyebrows");
 		Eyebrows->SetupAttachment(GetMesh());
 		Eyebrows->AttachmentName = FString("head");
+}
+
+void APlayerCharacterBase::Tick(float DeltaTime)
+{
+	if (Attributes && PlayerOverlay)
+	{
+		Attributes->RegenStamina(DeltaTime);
+		PlayerOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
+	
 }
 
 void APlayerCharacterBase::BeginPlay()
@@ -145,13 +155,14 @@ void APlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Interaction);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &APlayerCharacterBase::Attack);
 		EnhancedInputComponent->BindAction(WeaponEquip, ETriggerEvent::Started, this, &APlayerCharacterBase::EquipWeaponFromBack);
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Started, this, &APlayerCharacterBase::DodgeInput);
 		
 	}
 }
 
 void APlayerCharacterBase::Move(const FInputActionValue& Value)
 {
-	if (ActionState != EActionState::EAS_Unoccupied) return;
+	if (ActionState != EActionState::EAS_Unoccupied && ActionState != EActionState::EAS_Dodge) return;
 	const FVector2D Direction = Value.Get<FVector2D>();
 	if (Controller)
 	{
@@ -195,6 +206,30 @@ void APlayerCharacterBase::AttackInput(const FInputActionValue& Value)
 	Attack();
 }
 
+
+bool APlayerCharacterBase::IsOccupied()
+{
+	return ActionState != EActionState::EAS_Unoccupied;
+}
+
+bool APlayerCharacterBase::HasEnoughStamina()
+{
+	return Attributes && Attributes->GetStamina() > Attributes->GetDodgeCost();
+}
+
+void APlayerCharacterBase::DodgeInput(const FInputActionValue& Value)
+{
+	if (IsOccupied() || !HasEnoughStamina()) return;
+
+	
+	PlayDodgeMontage();
+	ActionState = EActionState::EAS_Dodge;
+	if (Attributes && PlayerOverlay)
+	{
+		Attributes->UseStamina(Attributes->GetDodgeCost());
+		PlayerOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
+	}
+}
 
 void APlayerCharacterBase::Jump()
 {
@@ -267,6 +302,13 @@ void APlayerCharacterBase::Attack()
 void APlayerCharacterBase::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify
+}
+
+void APlayerCharacterBase::DodgeEnd()
+{
+	Super::DodgeEnd();
+
+	ActionState = EActionState::EAS_Unoccupied;
 }
 
 

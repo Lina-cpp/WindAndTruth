@@ -38,6 +38,8 @@ protected:
 	virtual void Attack();
 	UFUNCTION(BlueprintCallable)
 	virtual void AttackEnd();
+	UFUNCTION(BlueprintCallable)
+	virtual void DodgeEnd();
 	bool IsAlive();
 	virtual void Die();
 
@@ -74,6 +76,7 @@ protected:
 	int32 PlayRandomMontageSection(UAnimMontage* Montage, const TArray<FName>& SectionNames);
 	virtual int32 PlayAttackMontage();
 	virtual int32 PlayDeathMontage();
+	virtual void PlayDodgeMontage();
 	void DisableCapsule();
 	void DisableMeshCollision();
 	
@@ -104,6 +107,9 @@ private:
 	UAnimMontage* HitReactMontage;
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* DeathMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* DodgeMontage;
+	
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	TArray<FName> AttackMontageSections; //Array of all Montage Sections
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
