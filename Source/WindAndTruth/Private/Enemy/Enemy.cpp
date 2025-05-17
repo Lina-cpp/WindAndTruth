@@ -9,6 +9,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/AttributeComponent.h"
 #include "HUD/HealthBarComponent.h"
+#include "Items/Soul.h"
 #include "Items/Weapons/Weapon.h"
 
 #include "Navigation/PathFollowingComponent.h"
@@ -253,6 +254,15 @@ void AEnemy::CheckCombatTarget()
 */
 
 
+void AEnemy::SpawnSoul()
+{
+	UWorld* World = GetWorld();
+	if (World &&SoulClass && Attributes)
+	{
+		ASoul* SpawnedSoul = World->SpawnActor<ASoul>(SoulClass, GetActorLocation(), GetActorRotation());
+		SpawnedSoul->SetSouls(Attributes->GetSouls()); //spawn amount of souls set in attributes (or BP)
+	}
+}
 
 void AEnemy::Die()
 {
@@ -262,10 +272,14 @@ void AEnemy::Die()
 	ClearAttackTimer();
 	HideHealthBar();
 	DisableCapsule();
+	DisableMeshCollision();
 	SetLifeSpan(DeathLifeSpan); //Destroy actor after 5s of being dead
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	PlayDeathSound(GetActorLocation());
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
+	SpawnSoul();
+	GEngine->AddOnScreenDebugMessage(-1, 4, FColor::Blue, FString::Printf(TEXT("he ded")));
+
 	
 	//Rolling for Weapon Drop and destroying
 	if (EquippedWeapon)

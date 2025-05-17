@@ -29,7 +29,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Actor Attributes")
 	int32 Gold;
-	UPROPERTY(VisibleAnywhere, Category = "Actor Attributes")
+	UPROPERTY(EditAnywhere, Category = "Actor Attributes")
 	int32 Souls;
 
 //setters and getters

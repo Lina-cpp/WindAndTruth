@@ -82,8 +82,6 @@ void APlayerCharacterBase::GetHit_Implementation(const FVector& ImpactPoint, AAc
 	if (Attributes && Attributes->GetHealthPercent() > 0.f)
 	{
 		ActionState = EActionState::EAS_HitReaction;
-		DisableMeshCollision();
-		DisableCapsule();
 	}
 }
 
@@ -277,6 +275,8 @@ void APlayerCharacterBase::Die()
 	Super::Die();
 
 	ActionState = EActionState::EAS_Dead;
+	DisableMeshCollision();
+	DisableCapsule();
 }
 
 

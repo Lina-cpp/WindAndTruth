@@ -37,6 +37,7 @@ protected:
 
 	virtual bool CanAttack() override;
 	virtual void Die() override;
+	void SpawnSoul();
 	virtual void HandleDamage(float DamageAmount) override;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
@@ -134,6 +135,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float AttackMax = 1.f;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	TSubclassOf<class ASoul> SoulClass;
 };
 
 

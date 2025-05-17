@@ -22,4 +22,5 @@ private:
 	int32 Souls; //How many souls grants
 public:
 	FORCEINLINE int32 GetSouls() const { return Souls; }
+	FORCEINLINE void SetSouls(int32 value) { Souls = value; }
 };
