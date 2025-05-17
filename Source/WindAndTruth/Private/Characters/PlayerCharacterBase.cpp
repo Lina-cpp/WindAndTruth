@@ -197,7 +197,7 @@ void APlayerCharacterBase::Jump()
 {
 	if (IsUnoccupied())
 	{
-		Super::Jump();	
+		Super::Jump();
 	}
 }
 
