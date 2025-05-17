@@ -63,7 +63,7 @@ protected:
 		UInputAction* WeaponEquip;
 			void EquipWeaponFromBack(const FInputActionValue& Value);
 
-
+	virtual void Jump() override;
 	
 
 /*	Play montage functions	*/
@@ -93,7 +93,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void HitReactEnd();
 
-	//UFUNCTION(BlueprintCallable) //in case if I'd like to force stop character while equiping weapon
+	//UFUNCTION(BlueprintCallable) //in case if I'd like to force stop character while equipping weapon
 	//void FinishEquipping();
 
 	
@@ -117,7 +117,9 @@ private:
 	UPROPERTY()
 	UPlayerOverlay* PlayerOverlay;
 
+	bool IsUnoccupied();
 	void InitializePlayerOverlay();
+	void SetHUDHealth();
 	
 /**
 * ENUMS
@@ -140,4 +142,5 @@ public:
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
 
 };
+
 
