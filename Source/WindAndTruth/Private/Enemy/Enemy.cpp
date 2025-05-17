@@ -170,6 +170,9 @@ void AEnemy::CheckPatrolTarget()
 
 void AEnemy::Attack()
 {
+	Super::Attack();
+	if (CombatTarget == nullptr) return;
+
 	EnemyState = EEnemyState::EES_Engaged;
 	PlayAttackMontage();
 }
@@ -250,22 +253,12 @@ void AEnemy::CheckCombatTarget()
 */
 
 
-int32 AEnemy::PlayDeathMontage()
-{
-	const int32 Selection = Super::PlayDeathMontage();
-	TEnumAsByte<EDeathPose> Pose(Selection); //Sets Pose to a enum value depending on Selection - so If Selection == 1 -> Pose == Second index of EDeathPose
-	if (Pose < EDeathPose::EDP_MAX)
-	{
-		DeathPose = Pose;
-	}
-	return Selection;
-}
-
 
 void AEnemy::Die()
 {
+	Super::Die();
+	
 	EnemyState = EEnemyState::EES_Dead; //set enemy to dead (prevents playing hit animation)
-	PlayDeathMontage();
 	ClearAttackTimer();
 	HideHealthBar();
 	DisableCapsule();

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Characters/BaseCharacter.h"
-#include "Characters/CharacterTypes.h" //include for ENUM
 
 #include "Enemy.generated.h"
 
@@ -40,14 +39,9 @@ protected:
 	virtual void Die() override;
 	virtual void HandleDamage(float DamageAmount) override;
 
-	virtual int32 PlayDeathMontage() override;
-
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float DeathLifeSpan = 5.f;
-
-	//DeathPose enum, to play right anim
-	UPROPERTY(BlueprintReadOnly)
-	TEnumAsByte<EDeathPose> DeathPose;
+	
 	UPROPERTY(BlueprintReadOnly)
 	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 

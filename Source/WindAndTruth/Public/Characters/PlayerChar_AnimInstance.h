@@ -29,6 +29,12 @@ public:
 		float GroundSpeed;
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 		bool IsFalling;
-	UPROPERTY(BlueprintReadOnly, Category = "Movement | Character State")
+	UPROPERTY(BlueprintReadOnly, Category = "Movement | State")
 		ECharacterState CharacterState; //Enum with current player State - Changed in PlayerCharacterBase
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Movement | State")
+	EActionState ActionState;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement | State")
+	TEnumAsByte<EDeathPose> DeathPose;
+
 };

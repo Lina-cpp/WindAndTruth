@@ -7,6 +7,7 @@
 #include "Components/AttributeComponent.h" //Components with Attributes hp, etc.
 #include "Kismet/GameplayStatics.h" //SFX & VFX
 #include "Components/CapsuleComponent.h" //Turn Off capsule collision
+#include "Characters/CharacterTypes.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -58,6 +59,11 @@ void ABaseCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type Collision
 *	Combat & Weapons
 */
 
+
+bool ABaseCharacter::IsAlive()
+{
+	return Attributes && Attributes->IsAlive();
+}
 bool ABaseCharacter::CanAttack()
 {
 	return false;
@@ -65,13 +71,12 @@ bool ABaseCharacter::CanAttack()
 
 void ABaseCharacter::Attack()
 {
-	
+	if (CombatTarget && CombatTarget->ActorHasTag(FName("Dead")))
+	{
+		CombatTarget = nullptr;	//If actor has dead tag, clear combat target (Enemy should go back to patrolling)
+	}
 }
 
-bool ABaseCharacter::IsAlive()
-{
-	return Attributes && Attributes->IsAlive();
-}
 
 void ABaseCharacter::AttackEnd()
 {
@@ -80,7 +85,8 @@ void ABaseCharacter::AttackEnd()
 
 void ABaseCharacter::Die()
 {
-	
+	Tags.Add(FName("Dead"));
+	PlayDeathMontage();
 }
 
 void ABaseCharacter::HandleDamage(float DamageAmount)
@@ -168,12 +174,23 @@ int32 ABaseCharacter::PlayAttackMontage()
 
 int32 ABaseCharacter::PlayDeathMontage()
 {
-	return PlayRandomMontageSection(DeathMontage, DeathMontageSections);
+	const int32 Selection = PlayRandomMontageSection(DeathMontage, DeathMontageSections);
+	TEnumAsByte<EDeathPose> Pose(Selection); //Sets Pose to a enum value depending on Selection - so If Selection == 1 -> Pose == Second index of EDeathPose
+	if (Pose < EDeathPose::EDP_MAX)
+	{
+		DeathPose = Pose;
+	}
+	return Selection;
 }
 
 void ABaseCharacter::DisableCapsule()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); //Disable Enemy Collision when is dead
+}
+
+void ABaseCharacter::DisableMeshCollision()
+{
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABaseCharacter::StopAttackMontage()

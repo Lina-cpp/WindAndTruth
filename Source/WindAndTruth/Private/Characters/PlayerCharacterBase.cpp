@@ -79,7 +79,12 @@ void APlayerCharacterBase::GetHit_Implementation(const FVector& ImpactPoint, AAc
 	Super::GetHit_Implementation(ImpactPoint, Hitter);
 
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
-	ActionState = EActionState::EAS_HitReaction;
+	if (Attributes && Attributes->GetHealthPercent() > 0.f)
+	{
+		ActionState = EActionState::EAS_HitReaction;
+		DisableMeshCollision();
+		DisableCapsule();
+	}
 }
 
 
@@ -264,6 +269,14 @@ void APlayerCharacterBase::Attack()
 void APlayerCharacterBase::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied; //Function called in ABP_Echo on notify
+}
+
+
+void APlayerCharacterBase::Die()
+{
+	Super::Die();
+
+	ActionState = EActionState::EAS_Dead;
 }
 
 

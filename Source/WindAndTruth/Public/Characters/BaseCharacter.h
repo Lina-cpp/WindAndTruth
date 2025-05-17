@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/HitInterface.h"
+#include "Characters/CharacterTypes.h" //include for ENUM
+
 #include "BaseCharacter.generated.h"
 
 class AWeapon;
@@ -54,7 +56,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	double WarpTargetDistance = 75.f;
 	
-
+	//DeathPose enum, to play right anim
+	UPROPERTY(BlueprintReadOnly)
+	TEnumAsByte<EDeathPose> DeathPose;
+	
 /*
 * SFX & VFX
 */
@@ -70,6 +75,7 @@ protected:
 	virtual int32 PlayAttackMontage();
 	virtual int32 PlayDeathMontage();
 	void DisableCapsule();
+	void DisableMeshCollision();
 	
 	void StopAttackMontage();
 /**
@@ -103,6 +109,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
 	TArray<FName> DeathMontageSections;
 
+public:
+	FORCEINLINE TEnumAsByte<EDeathPose> GetDeathPose() const { return DeathPose; }
 };
 
 

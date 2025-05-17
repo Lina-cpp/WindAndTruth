@@ -79,6 +79,7 @@ protected:
 	void Disarm();
 	void Arm();
 	virtual void Attack() override;
+	virtual void Die() override;
 	
 
 
@@ -140,7 +141,7 @@ private:
 public:
 	//public getter for EnumVar so PlayerChar_AnimInstance can get the value
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
-
+	FORCEINLINE EActionState GetActionState() const { return ActionState; }
 };
 
 
