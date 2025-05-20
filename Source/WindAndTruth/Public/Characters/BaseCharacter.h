@@ -51,7 +51,7 @@ protected:
 	FVector GetRotationWarpTarget();
 	
 	//Pointer to weapon char ic currently using
-	UPROPERTY(VisibleAnywhere, Category = Weapon) 
+	UPROPERTY(VisibleAnywhere, Category = "Combat | Weapon") 
 	AWeapon* EquippedWeapon;
 	UPROPERTY(BlueprintReadOnly, Category = Combat)
 	AActor* CombatTarget;
@@ -91,23 +91,23 @@ protected:
 * SFX & VFX
 */
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Effects | SFX")
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Effects | SFX")
 	USoundBase* HitSound;
-	UPROPERTY(EditAnywhere, Category = "Effects | VFX")
+	UPROPERTY(EditAnywhere, Category = "Combat | Effects | VFX")
 	UParticleSystem* HitParticle;
-	UPROPERTY(EditDefaultsOnly, Category = "Effects | SFX")
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Effects | SFX")
 	USoundBase* DeathSound;
 
 /**
 * Animation Montages
 **/
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Montages")
 	UAnimMontage* AttackMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Montages")
 	UAnimMontage* HitReactMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Montages")
 	UAnimMontage* DeathMontage;
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UPROPERTY(EditDefaultsOnly, Category = "Combat | Montages")
 	UAnimMontage* DodgeMontage;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Combat)
