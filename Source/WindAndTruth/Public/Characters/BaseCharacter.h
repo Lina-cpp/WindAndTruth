@@ -41,7 +41,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void DodgeEnd();
 	bool IsAlive();
-	virtual void Die();
+	UFUNCTION(BlueprintNativeEvent)
+	void Die();
 
 	virtual void HandleDamage(float DamageAmount);
 

@@ -145,7 +145,7 @@ void AEnemy::MoveToTarget(AActor* Target)
 	if (EnemyController == nullptr || Target == nullptr) return; //if controller or target is null, leave function
 	FAIMoveRequest MoveRequest;				//Create Request for AIMoveTo
 	MoveRequest.SetGoalActor(Target);	//Set Destination
-	MoveRequest.SetAcceptanceRadius(60.f);	//Radius of the dest. point that will count as destination
+	MoveRequest.SetAcceptanceRadius(AcceptanceRadius);	//Radius of the dest. point that will count as destination
 	EnemyController->MoveTo(MoveRequest);
 }
 
@@ -194,6 +194,10 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 	ClearAttackTimer();
 	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	StopAttackMontage();
+	if (IsInsideAttackRadius())
+	{
+		if (!IsDead()) StartAttackTimer();
+	}
 }
 
 float AEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -257,16 +261,22 @@ void AEnemy::CheckCombatTarget()
 void AEnemy::SpawnSoul()
 {
 	UWorld* World = GetWorld();
-	if (World &&SoulClass && Attributes)
+	if (World && SoulClass && Attributes)
 	{
-		ASoul* SpawnedSoul = World->SpawnActor<ASoul>(SoulClass, GetActorLocation(), GetActorRotation());
-		SpawnedSoul->SetSouls(Attributes->GetSouls()); //spawn amount of souls set in attributes (or BP)
+		const FVector SpawnLocation = GetActorLocation() + FVector(0.f, 0.f, 125.f);
+		ASoul* SpawnedSoul = World->SpawnActor<ASoul>(SoulClass, SpawnLocation, GetActorRotation());
+		if (SpawnedSoul)
+		{
+			SpawnedSoul->SetSouls(Attributes->GetSouls()); //spawn amount of souls set in attributes (or BP)
+			SpawnedSoul->SetOwner(this); //To know who spawned soul - used to ignore when soul drifts
+		}
+
 	}
 }
 
-void AEnemy::Die()
+void AEnemy::Die_Implementation()
 {
-	Super::Die();
+	Super::Die_Implementation();
 	
 	EnemyState = EEnemyState::EES_Dead; //set enemy to dead (prevents playing hit animation)
 	ClearAttackTimer();

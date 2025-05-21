@@ -36,7 +36,7 @@ protected:
 	virtual void AttackEnd() override;
 
 	virtual bool CanAttack() override;
-	virtual void Die() override;
+	virtual void Die_Implementation() override;
 	void SpawnSoul();
 	virtual void HandleDamage(float DamageAmount) override;
 
@@ -94,12 +94,14 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UPawnSensingComponent* PawnSensing;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = Combat)
 	double CombatRadius = 1000.f;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = Combat)
 	double AttackRadius = 200.f;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	double AcceptanceRadius = 50.f;
 	
 	UPROPERTY()
 	class AAIController* EnemyController;

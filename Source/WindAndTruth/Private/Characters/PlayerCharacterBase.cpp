@@ -312,9 +312,9 @@ void APlayerCharacterBase::DodgeEnd()
 }
 
 
-void APlayerCharacterBase::Die()
+void APlayerCharacterBase::Die_Implementation()
 {
-	Super::Die();
+	Super::Die_Implementation();
 
 	ActionState = EActionState::EAS_Dead;
 	DisableMeshCollision();
