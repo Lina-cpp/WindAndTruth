@@ -196,6 +196,11 @@ void APlayerCharacterBase::Interaction(const FInputActionValue& Value)
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon)
 	{
+		if (EquippedWeapon)
+		{
+			GetWorld()->SpawnActor<AWeapon>(EquippedWeapon->GetClass(), GetActorLocation(), FRotator(0.f, 0.f, 0.f));
+			EquippedWeapon->Destroy();
+		}
 		EquipWeapon(OverlappingWeapon);
 	}
 	else GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Purple, FString("WeaponNotValid"));

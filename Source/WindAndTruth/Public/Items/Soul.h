@@ -26,7 +26,7 @@ private:
 
 	double DesiredZ;
 	UPROPERTY(EditAnywhere)
-	float DriftRate = -15.f;
+	float DriftRate = -30.f;
 public:
 	FORCEINLINE int32 GetSouls() const { return Souls; }
 	FORCEINLINE void SetSouls(int32 value) { Souls = value; }
